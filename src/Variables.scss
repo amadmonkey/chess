@@ -1,0 +1,20 @@
+/********************************/
+/* variables
+/********************************/
+
+$brown-bg: #512900;
+$teal: teal;
+$purple: purple;
+
+$board-light: #ffe0ac;
+$board-dark: #9e6848;
+
+/********************************/
+/* mixins
+/********************************/
+@mixin transition($transition...) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    transition:         $transition;
+}
