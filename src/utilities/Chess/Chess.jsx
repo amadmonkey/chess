@@ -37,6 +37,7 @@ const Chess = (props) => {
         } else { // if clicked on a node
             if (holdingPiece) {
                 // move piece
+                // call db
                 SET.map(obj => {
                     if (obj.id === holdingPiece.id) {
                         obj.position = piece.split('n-')[1];

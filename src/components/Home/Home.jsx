@@ -18,13 +18,16 @@ const Home = () => {
         });
     }, [])
 
-    return (
+    return userDetails ? (
         <div className="content">
-            <div className="chess-section">
-                {userDetails ? <Chess userDetails={userDetails} /> : "Loading board"}
-            </div>
+            <section className="section chess">
+                <Chess userDetails={userDetails} />
+            </section>
+            <section className="section chat">
+                {/* <Chess userDetails={userDetails} /> */}
+            </section>
         </div>
-    )
+    ) : "Loading"
 }
 
 export default Home
