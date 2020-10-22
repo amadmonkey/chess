@@ -1,4 +1,16 @@
 import React from 'react';
+import { ReactComponent as PAWN_LIGHT } from '../img/chess_pieces/pawn-light.svg';
+import { ReactComponent as PAWN_DARK } from '../img/chess_pieces/pawn-dark.svg';
+import { ReactComponent as ROOK_LIGHT } from '../img/chess_pieces/rook-light.svg';
+import { ReactComponent as ROOK_DARK } from '../img/chess_pieces/rook-dark.svg';
+import { ReactComponent as KNIGHT_LIGHT } from '../img/chess_pieces/knight-light.svg';
+import { ReactComponent as KNIGHT_DARK } from '../img/chess_pieces/knight-dark.svg';
+import { ReactComponent as BISHOP_LIGHT } from '../img/chess_pieces/bishop-light.svg';
+import { ReactComponent as BISHOP_DARK } from '../img/chess_pieces/bishop-dark.svg';
+import { ReactComponent as QUEEN_LIGHT } from '../img/chess_pieces/queen-light.svg';
+import { ReactComponent as QUEEN_DARK } from '../img/chess_pieces/queen-dark.svg';
+import { ReactComponent as KING_LIGHT } from '../img/chess_pieces/king-light.svg';
+import { ReactComponent as KING_DARK } from '../img/chess_pieces/king-dark.svg';
 
 const PieceNames = {
     PAWN: "PAWN",
@@ -10,57 +22,15 @@ const PieceNames = {
 }
 
 class Piece {
-    constructor({ isLight = "", pieceName = "", position = "", isOpponent = false }){
+    constructor({ isLight = "", pieceName = "", position = "", isOpponent = false, component = "" }){
         this.id = 'p-' + position;
         this.isLight = isLight;
         this.pieceName = pieceName;
         this.position = position;
         this.isOpponent = isOpponent;
-        this.component = React.createElement('div', {id: `p-${this.position}`, className: `chess-piece ${isOpponent ? "opponent" : ""}`}, `${this.pieceName}`)
+        this.component = component;
     }
 }
-
-// const getPawns = (attr) => {
-//     let pieces = [];
-//     for(let x = 0; x < 8; x++){
-//         let charCode = isLight ? (65 + x) : (72 - x);
-//         pieces.push(new Piece({isLight: isLight, name: PieceNames.PAWN, position: `${String.fromCharCode(charCode)}${isLight ? 2 : 7}`}));
-//     }
-//     return pieces;
-// }
-
-// const getRooks = (attr) => {
-//     return [
-//         new Piece({isLight: isLight, name: PieceNames.ROOK, position: isLight ? 'A1' : 'H8'}),
-//         new Piece({isLight: isLight, name: PieceNames.ROOK, position: isLight ? 'H1' : 'A8'}),
-//     ]
-// }
-
-// const getKnights = (attr) => {
-//     return [
-//         new Piece({isLight: isLight, name: PieceNames.KNIGHT, position: isLight ? 'B1' : 'G8'}),
-//         new Piece({isLight: isLight, name: PieceNames.KNIGHT, position: isLight ? 'G1' : 'B8'}),
-//     ]
-// }
-
-// const getBishops = (attr) => {
-//     return [
-//         new Piece({isLight: isLight, name: PieceNames.BISHOP, position: isLight ? 'C1' : 'F8'}),
-//         new Piece({isLight: isLight, name: PieceNames.BISHOP, position: isLight ? 'F1' : 'C8'}),
-//     ]
-// }
-
-// const getQueen = (attr) => {
-//     return [
-//         new Piece({isLight: isLight, name: PieceNames.QUEEN, position: isLight ? 'D1' : 'D8'}),
-//     ]
-// }
-
-// const getKing = (attr) => {
-//     return [
-//         new Piece({isLight: isLight, name: PieceNames.KING, position: isLight ? 'E1' : 'E8'}),
-//     ]
-// }
 
 const getPiece = (pieceName, attr) => {
     let attr1;
@@ -73,6 +43,7 @@ const getPiece = (pieceName, attr) => {
             for(let x = 0; x < 8; x++){
                 let charCode = attr.isLight ? (65 + x) : (72 - x);
                 attr.position = `${String.fromCharCode(charCode)}${attr.isLight ? 2 : 7}`;
+                attr.component = attr.isLight ? <PAWN_LIGHT /> : <PAWN_DARK />;
                 pieces.push(new Piece(attr));
             }
             return pieces;
@@ -81,6 +52,8 @@ const getPiece = (pieceName, attr) => {
             attr2 = {...attr};
             attr1.position = attr.isLight ? 'A1' : 'H8';
             attr2.position = attr.isLight ? 'H1' : 'A8';
+            attr1.component = attr1.isLight ? <ROOK_LIGHT /> : <ROOK_DARK />;
+            attr2.component = attr2.isLight ? <ROOK_LIGHT /> : <ROOK_DARK />;
             return [
                 new Piece(attr1),
                 new Piece(attr2)
@@ -90,6 +63,8 @@ const getPiece = (pieceName, attr) => {
             attr2 = {...attr};
             attr1.position = attr.isLight ? 'B1' : 'G8';
             attr2.position = attr.isLight ? 'G1' : 'B8';
+            attr1.component = attr1.isLight ? <KNIGHT_LIGHT /> : <KNIGHT_DARK />;
+            attr2.component = attr2.isLight ? <KNIGHT_LIGHT /> : <KNIGHT_DARK />;
             return [
                 new Piece(attr1),
                 new Piece(attr2)
@@ -99,17 +74,21 @@ const getPiece = (pieceName, attr) => {
             attr2 = {...attr};
             attr1.position = attr.isLight ? 'C1' : 'F8';
             attr2.position = attr.isLight ? 'F1' : 'C8';
+            attr1.component = attr1.isLight ? <BISHOP_LIGHT /> : <BISHOP_DARK />;
+            attr2.component = attr2.isLight ? <BISHOP_LIGHT /> : <BISHOP_DARK />;
             return [
                 new Piece(attr1),
                 new Piece(attr2)
             ]
         case PieceNames.QUEEN:
             attr.position = attr.isLight ? 'D1' : 'D8';
+            attr.component = attr.isLight ? <QUEEN_LIGHT /> : <QUEEN_DARK />;
             return [
                 new Piece(attr)
             ]
         case PieceNames.KING:
             attr.position = attr.isLight ? 'E1' : 'E8';
+            attr.component = attr.isLight ? <KING_LIGHT /> : <KING_DARK />;
             return [
                 new Piece(attr)
             ]

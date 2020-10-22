@@ -14,15 +14,15 @@ class Route {
 const ROUTES = {
     login: new Route({
         label: "Login",
-        path: "/",
+        path: "/login",
         component: Login,
         exact: true,
     }),
     home: new Route({
         label: "Home",
-        path: "/:roomId",
+        path: "/",
         component: Home,
-        exact: false,
+        exact: true,
     }),
     notFound: new Route({
         label: "404",

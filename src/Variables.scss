@@ -6,8 +6,15 @@ $brown-bg: #512900;
 $teal: teal;
 $purple: purple;
 
-$board-light: #ffe0ac;
-$board-dark: #9e6848;
+$board-light: #fde5d0;
+$board-dark: #aa7143;
+
+$chat-main: #aa7143;
+$chat-bg: #f1f1f1;
+$chat-user-bg: #8b8bee;
+$chat-oppo-bg: #84d3b5;
+$chat-input-bg: #d6d6d6;
+$chat-input-color: black;
 
 /********************************/
 /* mixins
@@ -17,4 +24,58 @@ $board-dark: #9e6848;
     -o-transition:      $transition;
     -webkit-transition: $transition;
     transition:         $transition;
+}
+
+@keyframes rotating {
+    100% { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1200px 0;
+    }
+    100% {
+        background-position: 1200px 0;
+    }
+}
+
+@keyframes glow {
+    0% {
+        filter: drop-shadow( 0 0 3px #e0e0e0);
+    }
+    50% {
+        filter: drop-shadow( 0 0 6px #e0e0e0);
+    }
+    100% {
+        filter: drop-shadow( 0 0 3px #e0e0e0);
+    }
+}
+
+@-webkit-keyframes orbit {
+    from { -webkit-transform: rotate(0deg) translateX(20px) rotate(0deg); }
+    to   { -webkit-transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@-moz-keyframes orbit {
+    from { -moz-transform: rotate(0deg) translateX(20px) rotate(0deg); }
+    to   { -moz-transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@-o-keyframes orbit {
+    from { -o-transform: rotate(0deg) translateX(20px) rotate(0deg); }
+    to   { -o-transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@keyframes orbit {
+    from { transform: rotate(0deg) translateX(20px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(20px) rotate(-360deg); }
 }

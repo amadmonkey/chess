@@ -1,8 +1,30 @@
 @import '../../Variables.scss';
 
 .chess-container {
-    background-color: $board-light;
+    position: relative;
     overflow: hidden;
+    height: 100%;
+    .chess {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        max-width: 700px;
+        width: 90%;
+        border: 8px solid $board-dark;
+        box-shadow: -19px 19px 19px darken($board-light, 20%);
+        border-radius: 15px;
+        &.turn-user {
+            .chess-piece:not(.opponent) {
+                animation: glow 2s linear infinite;
+            }
+        }
+        &.turn-opponent {
+            .opponent {
+                animation: glow 2s linear infinite;
+            }
+        }
+    }
     ul {
        display: flex;
        flex-direction: row;
@@ -43,12 +65,25 @@
                 }
                 .chess-piece {
                     text-align: center;
+                    padding: 15px;
+                    box-sizing: border-box;
+                    @include transition(0.5s ease-in-out);
                     &:not(.opponent) {
                         cursor: grab;
                     }
                     &.moving {
                         opacity: 0.3;
                     }
+                    svg {
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+                &:first-child {
+                    border-top-left-radius: 10px;
+                }
+                &:last-child {
+                    border-bottom-right-radius: 10px;
                 }
             }
        }
@@ -93,10 +128,15 @@
     .hand {
         display: none;
         position: absolute;
-        height: 100px;
-        width: 100px;
+        height: 70px;
+        width: 70px;
         top: 0px;
         left: 0px;
         pointer-events: none;
+        svg {
+            height: 100%;
+            width: 100%;
+            filter: drop-shadow( 10px 10px 5px rgba(0, 0, 0, .7));
+        }
     }
 }

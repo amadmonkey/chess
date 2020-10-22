@@ -1,0 +1,187 @@
+@import '../../Variables.scss';
+
+.login-container {
+    background-color: $board-light;
+    box-shadow: 0 0 200px darken($board-light, 50%) inset;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    .form-container {
+        position: absolute;
+        width: 500px;
+        height: 550px;
+        box-sizing: border-box;
+        background: $board-light;
+        border: 10px solid $board-dark;
+        top: 50%;
+        left: 50%;
+        border-radius: 20px;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 200px darken($board-light, 20%) inset, 0 0 50px darken($board-light, 10%);
+        header {
+            padding-top: 50px;
+            padding-bottom: 10px;
+            text-align: center;
+            svg {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        form {
+            padding: 30px;
+            text-align: center;
+            > * {
+                display: block;
+                margin: 10px;
+                width: 250px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            > label {
+                font-size: 15px;
+            }
+            > input {
+                background-color: $chat-input-bg;
+                height: 40px;
+                border: none;
+                padding: 5px 20px;
+                box-shadow: 0 0 10px darken($chat-input-bg, 10%) inset;
+                border-radius: 20px;
+                box-sizing: border-box;
+                color: $chat-input-color;
+                &::placeholder {
+                    color: #818181;
+                }
+            }
+            button {
+                border-radius: 40px;
+                border: none;
+                margin-top: 30px;
+                height: 50px;
+                margin-left: auto;
+                margin-right: auto;
+                box-sizing: border-box;
+                border: 5px solid darken(#4a7dad, 20%);
+                background-color: #4a7dad;
+                font-weight: bold;
+                font-size: 15px;
+                color: darken(#4a7dad, 20%);
+            }
+        }
+        footer {
+            text-align: center;
+            font-size: 13px;
+            position: absolute;
+            bottom: -3px;
+            background-color: $board-dark;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            a {
+                display: inline-block;
+                text-decoration: none;
+                color: $board-light;
+                margin: 0 20px;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+    .login-overlay {
+        display: none;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        backdrop-filter: blur(8px);
+        z-index: 2;
+        text-align: center;
+        > div {
+            position: relative;
+            height: 200px;
+            width: 200px;
+            top: 50%;
+            margin: 0 auto;
+            transform: translateY(-50%);
+            .orbit {
+                height: 150px;
+                width: 150px;
+                animation: orbit 2s linear infinite;
+                position: absolute;
+                left: 40px;
+                z-index: -1;
+            }
+            > span {
+                color: $board-light;
+                font-size: 30px;
+                font-weight: bold;
+                left: 0;
+                text-shadow:
+                    3px 3px 0 #774b28,
+                    -1px -1px 0 #774b28,  
+                    1px -1px 0 #774b28,
+                    -1px 1px 0 #774b28,
+                    1px 1px 0 #774b28;
+            }
+            > div {
+                position: relative;
+                width: 150px;
+                margin: 20px auto;
+                .code-input {
+                    font-size: 30px;
+                    width: 100px;
+                    padding: 5px;
+                    border: 2px dotted black;
+                    border-radius: 20px;
+                    background-color: transparent;
+                    text-align: center;
+                    padding-right: 40px;
+                    cursor: pointer;
+                }
+                svg {
+                    position: absolute;
+                    right: 15px;
+                    height: 25px;
+                    top: 10px;
+                }
+                .copied {
+                    padding: 14px;
+                    background: #5454ec;
+                    border-radius: 20px;
+                    color: #fff;
+                    position: absolute;
+                    top: 70px;
+                    opacity: 0;
+                    /* margin: 0 auto; */
+                    left: 50%;
+                    transform: translateX(-50%);
+                    @include transition(0.1s ease-in-out);
+                    &.active {
+                        top: 40px;
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: -70px;
+            right: -70px;
+            &:hover {
+                svg {
+                    circle {
+                        fill:#ec4141 !important; 
+                    }
+                }
+            }
+            svg {
+                height: 50px;
+            }
+        }
+    }
+}

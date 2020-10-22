@@ -1,8 +1,20 @@
 @import '../../Variables.scss';
 
 .content {
-    .chess-section {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100vh;
+    background-color: $board-light;
+    box-shadow: 0 0 200px darken($board-light, 50%) inset;
+    > section {
         position: relative;
-        width: 800px;
+        background: none;
+        &.chess {
+            flex-grow: 2;
+        }
+        &.chat {
+            flex-grow: 1;
+            padding: 20px;
+        }
     }
 }
