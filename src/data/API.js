@@ -7,36 +7,17 @@ const base_local = "http://localhost:8080/";
 const socket = SocketClient(base_local);
 
 // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-function generateId(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
-
-const login = () => {
-
-}
-
-const logout = (params) => {
-    socket.emit('logout-request', params);
-}
-
-const cancelRoom = (params) => {
-    socket.emit('cancel-room', params);
-}
 
 const createRoom = (params) => {
-    params.isLight = Math.round(Math.random()) === 1;
-    params.roomId = generateId(4);
     socket.emit('create-room-request', params);
 }
 
 const joinRoom = (params) => {
     socket.emit('join-room-request', params);
+}
+
+const leaveRoom = (params) => {
+    socket.emit('leave-room', params);
 }
 
 const chat = (params) => {
@@ -57,11 +38,9 @@ const validateSession = (params) => {
 
 const API = {
     SOCKET: {
-        LOGIN: login,
-        LOGOUT: logout,
-        CANCEL_ROOM: cancelRoom,
         CREATE_ROOM: createRoom,
         JOIN_ROOM: joinRoom,
+        LEAVE_ROOM: leaveRoom,
         VALIDATE_SESSION: validateSession,
         CHAT: {
             SEND: chat,

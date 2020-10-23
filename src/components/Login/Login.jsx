@@ -24,7 +24,7 @@ const Login = (props) => {
     let waitingModal = useRef(null);
     const [nicknameValue, setNicknameValue] = useState("");
     const [roomId, setRoomId] = useState("");
-    console.log('login');
+
     const handleLogin = (e) => {
         e.preventDefault();
         if (nicknameValue && !roomId) {
@@ -57,7 +57,9 @@ const Login = (props) => {
         copied.current.classList.add('active');
         setTimeout(() => {
             if (copied) {
-                copied.current.classList.remove('active');
+                if (copied.current) {
+                    copied.current.classList.remove('active');
+                }
             }
         }, 1000);
         e.target.blur();
@@ -65,11 +67,7 @@ const Login = (props) => {
     }
 
     const handleLogout = () => {
-        Cookies.remove('user');
-        Cookies.remove('opponent');
-        Cookies.remove('turn');
-        Cookies.remove('set_user');
-        Cookies.remove('set_opponent');
+        Cookies.remove('roomId');
         waitingModal.current.style.display = 'none';
         API.SOCKET.CANCEL_ROOM({ roomId: codeInput.current.value });
         codeInput.current.value = "";
@@ -87,42 +85,39 @@ const Login = (props) => {
     // }
 
     useEffect(() => {
-        if (Cookies.get('user') && Cookies.get('opponent')) {
-            history.push('/');
-        } else if (Cookies.get('user')) {
-            codeInput.current.value = JSON.parse(Cookies.get('user')).roomId;
-            waitingModal.current.style.display = 'block';
-        }
+
+        Cookies.get('roomId') && history.push('/');
+
         API.SOCKET.LINK.on("create-room-response", function (params) {
-            console.info('created room ', params.userDetails.roomId);
-            Cookies.set('user', JSON.stringify(params.userDetails));
-            Cookies.set('set_user', JSON.stringify(params.set.user));
-            Cookies.set('set_opponent', JSON.stringify(params.set.opponent));
-            if (codeInput.current) { codeInput.current.value = params.userDetails.roomId }
-            if (waitingModal.current) { waitingModal.current.style.display = 'block' }
+            console.info('created room ', params);
+            Cookies.set('roomId', params.roomId);
+            codeInput.current.value = params.roomId;
+            waitingModal.current.style.display = 'block';
+            // if (codeInput.current) { codeInput.current.value = params.userDetails.roomId }
+            // if (waitingModal.current) { waitingModal.current.style.display = 'block' }
         });
+
         API.SOCKET.LINK.on("join-room-response", function (params) {
             if (params) {
                 console.info('joined room ', params);
-                if (Cookies.get('user')) {
+                if (Cookies.get('roomId')) {
                     // if the host is receiving
-                    Cookies.set('opponent', JSON.stringify(params.guestDetails));
-                    Cookies.set('turn', JSON.stringify(params.turn));
+                    Cookies.set('user', JSON.stringify(params.host));
+                    Cookies.set('opponent', JSON.stringify(params.guest));
                 } else {
                     // if the guest is receiving
-                    Cookies.set('user', JSON.stringify(params.guestDetails));
-                    Cookies.set('opponent', JSON.stringify(params.hostDetails));
-                    Cookies.set('turn', JSON.stringify(params.turn));
-                    Cookies.set('set_user', JSON.stringify(params.set.guest));
-                    Cookies.set('set_opponent', JSON.stringify(params.set.host));
+                    Cookies.set('roomId', params.roomId)
+                    Cookies.set('user', JSON.stringify(params.guest));
+                    Cookies.set('opponent', JSON.stringify(params.host));
                 }
                 // go to home
-                history.push('/');
+                history.push('/', params);
             } else {
                 // either incorrect roomId or room already has 2 clients
                 alert('room does not exist');
             }
         });
+
     }, [])
 
     return (

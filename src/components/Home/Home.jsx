@@ -1,5 +1,5 @@
 // app
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import Cookies from 'js-cookie';
 
@@ -15,38 +15,41 @@ import './Home.scss';
 
 const Home = () => {
     let history = useHistory();
-    let userDetails = null, opponentDetails = null, turn = null, set_user = null, set_opponent = null, ultiSet = null;
-
-    if (Cookies.get('opponent')) {
-        userDetails = JSON.parse(Cookies.get('user'));
-        opponentDetails = JSON.parse(Cookies.get('opponent'));
-        turn = JSON.parse(Cookies.get('turn'));
-        set_user = JSON.parse(Cookies.get('set_user'));
-        set_opponent = JSON.parse(Cookies.get('set_opponent'));
-    } else {
-        history.push('/login')
-    }
-    ultiSet = { userDetails: userDetails, opponentDetails: opponentDetails, turn: turn, user: set_user, opponent: set_opponent };
+    let user = Cookies.get('user');
+    let opponent = Cookies.get('opponent');
+    const [data, setData] = useState(null);
+    // userDetails = JSON.parse(Cookies.get('user'));
+    // opponentDetails = JSON.parse(Cookies.get('opponent'));
+    // turn = JSON.parse(Cookies.get('turn'));
+    // ultiSet = { userDetails: userDetails, opponentDetails: opponentDetails, turn: turn, user: set_user, opponent: set_opponent };
 
     useEffect(() => {
-        API.SOCKET.VALIDATE_SESSION(userDetails);
+        !user && history.push('/login');
+        if (user) {
+            API.SOCKET.VALIDATE_SESSION({ roomId: Cookies.get('roomId'), user: Cookies.get('user') });
+        }
         API.SOCKET.LINK.on('logout', (res) => {
+            Cookies.remove('roomId')
             Cookies.remove('user');
             Cookies.remove('opponent');
-            Cookies.remove('turn')
-            Cookies.remove('set_user');
-            Cookies.remove('set_opponent');
             history.push('/login')
         });
     }, [])
 
+    useEffect(() => {
+        API.SOCKET.LINK.on('validate-response', (res) => {
+            console.log(res);
+            setData(res);
+        });
+    }, [data])
+
     return (
         <div className="content">
             <section className="section chess">
-                {userDetails && <Chess data={ultiSet} />}
+                {data ? <Chess user={user} opponent={opponent} data={data} /> : "Loading"}
             </section>
             <section className="section chat">
-                {userDetails && <Chat data={ultiSet} />}
+                {/* {userDetails && <Chat data={urlParams} />} */}
             </section>
         </div>
     )

@@ -107,9 +107,7 @@ const Chat = (props) => {
     const copyToClipboard = (e) => {
         code.current.select();
         document.execCommand('copy');
-        e.target.blur();
         console.log('Copied to clipboard');
-        // alert('Copied to clipboard');
     }
 
     useEffect(scrollMessagesToBottom, [messages]);
