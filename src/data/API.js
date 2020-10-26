@@ -1,8 +1,9 @@
 import SocketClient from "socket.io-client";
 
 
-const base_local = "http://localhost:8080/";
-// const base_svr = "https://portfolio-game-catalog.herokuapp.com";
+// const base_local = "http://localhost:8080/";
+const base_local = "https://just-another-chess-app.herokuapp.com/";
+
 
 const socket = SocketClient(base_local);
 
