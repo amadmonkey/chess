@@ -124,6 +124,16 @@
                     transition: 0.1s;
                     background-color: rgba(56, 56, 56, 0.637);
                 }
+                &.castling-tile {
+                    &.valid-tile {
+                        &:after {
+                            box-sizing: border-box;
+                            background: url(../../img/chess-castling.svg) left center no-repeat;
+                            vertical-align: middle;
+                            background-size: 100% 60%;
+                        }
+                    }
+                }
             }
         }
         &.overlay {
@@ -132,6 +142,12 @@
                     &.valid-tile {
                         &:after {
                             opacity: 0;
+                        }
+                        &.castling-tile {
+                            &:after {
+                                opacity: 1;
+                                background-color: transparent;
+                            }
                         }
                     }
                     &:after {
@@ -262,15 +278,15 @@
     border-radius: 20px;
     color: #fff;
     position: absolute;
-    bottom: 40px;
+    bottom: 30%;
     opacity: 0;
     left: 50%;
     margin: 0 auto;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 3;
     @include transition(0.1s ease-in-out);
     &.active {
-        bottom: 70px;
+        bottom: 50%;
         opacity: 1;
     }
 }

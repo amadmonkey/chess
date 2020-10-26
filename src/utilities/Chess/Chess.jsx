@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 
 // components
 import { ReactComponent as Broken } from '../../img/chess-broken.svg';
+import { ReactComponent as Castle } from '../../img/chess-castling.svg';
 
 // data
 import API from '../../data/API.js';
@@ -41,18 +42,23 @@ const Chess = (props) => {
                     }
                 } else { // if clicked on a user piece
                     if (!holdingPiece) { // if not holding any piece then pick up
-                        MOVE.START(piece);
-                    } else { // if already holding a piece
-                        if (piece.id === holdingPiece.id) { // if clicked piece and holding piece is === then put down
-                            MOVE.END(piece);
-                        } else {
-                            // i could put here: if clicked piece and holding piece is !== then swap. not priority
+                        let validTiles = PIECE.GET.validTiles(piece);
+                        if (validTiles.length) { // check if there's valid tiles available for the selected piece
+                            validTiles.forEach((obj) => {
+                                if (obj.castling) {
+                                    // add 
+                                    obj.tile.classList.add('castling-tile');
+                                }
+                                obj.tile.classList.add('valid-tile');
+                            });
+                            MOVE.START(piece);
                         }
+                    } else { // if already holding a piece
+                        piece.id === holdingPiece.id && MOVE.END(piece);
                     }
                 }
             } else { // if clicked on a tile
                 if (holdingPiece && dom.classList.contains('valid-tile')) {
-                    debugger
                     API.SOCKET.CHESS.MOVE({ user: user, holdingPiece: holdingPiece, opponentPiece: null, roomId: d.roomId, newPosition: dom.id.split('-')[1] });
                     MOVE.END(holdingPiece);
                 }
@@ -77,13 +83,6 @@ const Chess = (props) => {
             setOnHandImage(PIECE.GET.image(piece));
             getDomById(piece.id).classList.add('moving');
             getDomById('chess').classList.add('overlay');
-            PIECE.GET.validTiles(piece).forEach((obj) => {
-                if (obj.castling) {
-                    // add 
-                    obj.tile.classList.add('castling-tile');
-                }
-                obj.tile.classList.add('valid-tile');
-            });
         },
         END: (piece) => {
             document.removeEventListener('mousemove', movePiece);
