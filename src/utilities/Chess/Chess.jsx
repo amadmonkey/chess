@@ -34,7 +34,7 @@ const Chess = (props) => {
         if (user.isLight === turn) { // if it's your turn
             if (typeof piece === 'object') { // if clicked on a piece
                 if (piece.isLight === !user.isLight) { // if clicked on an opposing piece
-                    if (holdingPiece) { // if holding a piece then eat
+                    if (holdingPiece && dom.classList.contains('valid-tile')) { // if holding a piece then eat
                         // eat
                         API.SOCKET.CHESS.MOVE({ user: user, holdingPiece: holdingPiece, opponentPiece: piece, roomId: d.roomId, newPosition: dom.id.split('-')[1] });
                         MOVE.END(piece);
@@ -52,6 +52,7 @@ const Chess = (props) => {
                 }
             } else { // if clicked on a tile
                 if (holdingPiece && dom.classList.contains('valid-tile')) {
+                    debugger
                     API.SOCKET.CHESS.MOVE({ user: user, holdingPiece: holdingPiece, opponentPiece: null, roomId: d.roomId, newPosition: dom.id.split('-')[1] });
                     MOVE.END(holdingPiece);
                 }

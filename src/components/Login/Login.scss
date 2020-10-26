@@ -215,17 +215,17 @@
                     border-radius: 20px;
                     color: #fff;
                     position: absolute;
-                    top: 70px;
+                    bottom: 0;
                     opacity: 0;
                     /* margin: 0 auto; */
                     width: 200px;
                     height: 69px;
                     box-sizing: border-box;
                     left: 50%;
-                    transform: translateX(-50%);
-                    @include transition(0.1s ease-in-out);
+                    transform: translateX(-50%) translateY(-50%);
+                    @include transition(0.2s);
                     &.active {
-                        top: 40px;
+                        bottom: 50%;
                         opacity: 1;
                     }
                 }
