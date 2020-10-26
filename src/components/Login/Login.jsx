@@ -32,9 +32,15 @@ const Login = () => {
         e.preventDefault();
         if (nicknameValue && !roomId) {
             // make new room
+            document.getElementById('form-submit').disabled = true;
+            document.getElementById('form-submit').classList.toggle('disabled');
+            document.getElementById('form-submit').textContent = "";
             API.SOCKET.CREATE_ROOM({ nickname: nicknameValue });
         } else if (nicknameValue && roomId) {
             // join existing room
+            document.getElementById('form-submit').disabled = true;
+            document.getElementById('form-submit').classList.toggle('disabled');
+            document.getElementById('form-submit').textContent = "";
             API.SOCKET.JOIN_ROOM({ nickname: nicknameValue, roomId: roomId });
         } else {
             setNicknameError("Please enter any nickname");
@@ -73,6 +79,9 @@ const Login = () => {
     const handleLogout = () => {
         Cookies.remove('roomId');
         waitingModal.current.classList.toggle('active');
+        document.getElementById('form-submit').disabled = false;
+        document.getElementById('form-submit').classList.toggle('disabled');
+        document.getElementById('form-submit').textContent = "ENTER";
         API.SOCKET.LEAVE_ROOM({ roomId: codeInput.current.value });
         codeInput.current.value = "";
     }
@@ -89,16 +98,28 @@ const Login = () => {
     // }
 
     useEffect(() => {
-
+        let isMounted = true;
         API.SOCKET.LINK.on("create-room-response", function (params) {
             Cookies.set('roomId', params.roomId);
-            document.getElementById('code-input').value = params.roomId;
+            isMounted && (document.getElementById('code-input').value = params.roomId);
             if (waitingModal) {
                 waitingModal.current && waitingModal.current.classList.toggle('active');
             }
         });
+        return () => {
+            isMounted = false;
+            API.SOCKET.LINK.off('create-room-response');
+        };
+    }, [])
 
+    useEffect(() => {
+        let isMounted = true;
         API.SOCKET.LINK.on("join-room-response", function (params, user) {
+            if (isMounted) {
+                document.getElementById('form-submit').disabled = false;
+                document.getElementById('form-submit').classList.toggle('disabled');
+                document.getElementById('form-submit').textContent = "ENTER";
+            }
             if (params) {
                 if (Cookies.get('roomId') && document.getElementById('_nickname')) {
                     // if the host is receiving
@@ -111,17 +132,20 @@ const Login = () => {
                     Cookies.set('opponent', JSON.stringify(params.host));
                 }
                 // go to home
-                window.location.href = '/';
+                // window.location.href = '/';
                 // if (document.getElementById('_nickname')) {
-                //     history.push('/', params);
+                history.push('/', params);
                 // }
             } else {
                 // either incorrect roomId or room already has 2 clients
                 alert('room does not exist');
             }
         });
-
-    }, [])
+        return () => {
+            isMounted = false;
+            API.SOCKET.LINK.off('join-room-response');
+        };
+    })
 
     return (
         <div className="login-container">
@@ -138,7 +162,7 @@ const Login = () => {
                     <label htmlFor="_roomId">Room ID</label>
                     <input placeholder="e.g: cH3s" style={{ fontSize: '12px' }} type=" text" id="_roomId" value={roomId} onChange={(e) => handleInput(e)} />
                     <label htmlFor="_roomId" className="form-description">Leave this blank if you're making a lobby</label>
-                    <button type="submit">ENTER</button>
+                    <button type="submit" id="form-submit">ENTER</button>
                 </form>
                 <footer>
                     <a href="https://www.flaticon.com/authors/smashicons" target="_blank" rel="noopener noreferrer" title="Smashicons">Smashicons</a>

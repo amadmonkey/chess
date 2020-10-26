@@ -1,5 +1,6 @@
 // app
 import React, { useState, useEffect, useRef } from 'react';
+import Cookies from 'js-cookie';
 
 // components
 import { ReactComponent as Broken } from '../../img/chess-broken.svg';
@@ -13,7 +14,7 @@ import './Chess.scss';
 
 const Chess = (props) => {
     let d = props.data;
-    let user = JSON.parse(props.user);
+    let user = JSON.parse(Cookies.get('user'));
     let holdingPiece = null;
     const handRef = useRef(null);
     const copied = useRef(null);
@@ -100,7 +101,6 @@ const Chess = (props) => {
 
     useEffect(() => {
         API.SOCKET.LINK.on('chess-move-response', (turn, userSet, opponentSet, done) => {
-            // if (!done) {    
             setTurn(turn);
             if (userSet[0].isLight === user.isLight) {
                 setUserSet(userSet);
@@ -109,7 +109,6 @@ const Chess = (props) => {
                 setUserSet(opponentSet);
                 setOpponentSet(userSet);
             }
-            // }
         });
     }, [turn, userSet]);
 

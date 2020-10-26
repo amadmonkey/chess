@@ -23,9 +23,8 @@ import "./Chat.scss";
 const Chat = (props) => {
     let d = props.data;
     let timer;
-    let history = useHistory();
-    let user = JSON.parse(props.user);
-    let opponent = JSON.parse(props.opponent);
+    let user = JSON.parse(Cookies.get('user'));
+    let opponent = JSON.parse(Cookies.get('opponent'));
     const code = useRef(null);
     const messageBoxRef = useRef(null);
     const [turn, setTurn] = useState(d.turn);
@@ -64,16 +63,6 @@ const Chat = (props) => {
     }
 
     useEffect(() => {
-        API.SOCKET.LINK.on("chat-response", (chat, t, done) => {
-            if (done) {
-                handleDone(user.nickname === JSON.parse(done).nickname ? 'WIN' : 'LOSE');
-            } else {
-                setTurn(t);
-                setMessages(chat);
-                clearTimeout(timer);
-                document.getElementById('typing').textContent = "";
-            }
-        });
         API.SOCKET.LINK.on("chat-typing", (res) => {
             clearTimeout(timer);
             document.getElementById('typing').textContent = res;
@@ -82,6 +71,24 @@ const Chat = (props) => {
             }, 3000);
             scrollMessagesToBottom();
         });
+    }, [])
+
+    useEffect(() => {
+        let isMounted = true;
+        API.SOCKET.LINK.on("chat-response", (chat, t, done) => {
+            if (done) {
+                isMounted && handleDone(user.nickname === JSON.parse(done).nickname ? 'WIN' : 'LOSE');
+            } else {
+                setTurn(t);
+                setMessages(chat);
+                clearTimeout(timer);
+                document.getElementById('typing').textContent = "";
+            }
+        });
+        return () => {
+            isMounted = false;
+            API.SOCKET.LINK.off("chat-response");
+        }
     }, [])
 
     const copyToClipboard = (e) => {
@@ -120,7 +127,7 @@ const Chat = (props) => {
                         <div className="tools">
                             <button className="reload" onClick={(e) => handleSettings(e)}><Reload /></button>
                             <button className="settings" onClick={(e) => handleSettings(e)}><Settings /></button>
-                            <button className="surrender" onClick={(e) => handleDone('LOGOUT')}><Flag /></button>
+                            <button className="surrender" onClick={() => handleDone('LOGOUT')}><Flag /></button>
                         </div>
                     </footer>
                 </div>

@@ -20,13 +20,12 @@ import './Home.scss';
 
 const Home = () => {
     let history = useHistory();
-    let user = Cookies.get('user');
-    let opponent = Cookies.get('opponent');
+    let user = Cookies.get('user') ? Cookies.get('user') : null;
+    let opponent = Cookies.get('opponent') ? Cookies.get('user') : null;
+
     const [data, setData] = useState(null);
-    const [finishImage, setFinishImage] = useState(null);
-    const [finishMessage, setFinishMessage] = useState(null);
-    const [finishOptions, setFinishOptions] = useState(null);
-    const [isFinisModalActive, setIsFinishModalActive] = useState(null);
+    const [isFinishModalActive, setIsFinishModalActive] = useState(false);
+    const [finishModal, setFinishModal] = useState({ image: null, message: { title: null, subtitle: null }, options: null });
 
     const handleFinishModal = (status) => {
         setModal(status);
@@ -37,67 +36,73 @@ const Home = () => {
         API.SOCKET.LEAVE_ROOM(JSON.parse(Cookies.get('user')));
     }
 
+    const backToLogin = () => {
+        history.push('/login');
+    }
+
     const setModal = (status) => {
         switch (status) {
             case 'WIN':
-                setFinishImage(<Win />)
-                setFinishMessage({ title: 'You win!', subtitle: "You crushed the opposing army! Now scrub their blood off your castle walls." });
-                setFinishOptions(
-                    <React.Fragment>
-                        <button onClick={() => history.push('/login')}>
-                            <Exit />
-                            To lobby
-                        </button>
-                    </React.Fragment>
-                );
+                setFinishModal({
+                    image: <Win />,
+                    message: { title: 'You win!', subtitle: "You crushed the opposing army! Now scrub their blood off your castle walls." },
+                    options:
+                        <React.Fragment>
+                            <button onClick={() => backToLogin()}>
+                                <Exit />
+                                To lobby
+                            </button>
+                        </React.Fragment>
+                });
                 setIsFinishModalActive(true);
                 clearCookies();
                 break;
             case 'WIN-DEFAULT':
-                setIsFinishModalActive(true);
-                setFinishImage(<Win />)
-                setFinishMessage({ title: 'Win!', subtitle: "You won by submission! Congratulations I guess?" });
-                setFinishOptions(
-                    <React.Fragment>
-                        <button onClick={() => history.push('/login')}>
-                            <Exit />
-                            To lobby
-                        </button>
-                    </React.Fragment>
-                );
+                setFinishModal({
+                    image: <Win />,
+                    message: { title: 'Win!', subtitle: "You won by submission! Congratulations I guess?" },
+                    options:
+                        <React.Fragment>
+                            <button onClick={() => backToLogin()}>
+                                <Exit />
+                                To lobby
+                            </button>
+                        </React.Fragment>
+                });
                 setIsFinishModalActive(true);
                 clearCookies();
                 break;
             case 'LOSE':
-                setIsFinishModalActive(true);
-                setFinishImage(<Lose />)
-                setFinishMessage({ title: 'Lose', subtitle: "Ew" });
-                setFinishOptions(
-                    <React.Fragment>
-                        <button onClick={() => history.push('/login')}>
-                            <Exit />
-                            To lobby
-                        </button>
-                    </React.Fragment>
-                );
+                setFinishModal({
+                    image: <Lose />,
+                    message: { title: 'Lose', subtitle: "Ew" },
+                    options:
+                        <React.Fragment>
+                            <button onClick={() => backToLogin()}>
+                                <Exit />
+                                To lobby
+                            </button>
+                        </React.Fragment>
+                });
                 setIsFinishModalActive(true);
                 clearCookies();
                 break;
             case 'LOGOUT':
-                setFinishImage(<Caution />)
-                setFinishMessage({ title: 'Surrender?', subtitle: "Surrendering will turn you into a loser. Are you a f****** loser?" });
-                setFinishOptions(
-                    <React.Fragment>
-                        <button onClick={() => setIsFinishModalActive(false)}>
-                            <Exit />
-                            Cancel
-                        </button>
-                        <button onClick={() => handleLogout()}>
-                            <Lose />
-                            Yes
-                        </button>
-                    </React.Fragment>
-                );
+                setFinishModal({
+                    image: <Caution />,
+                    message: { title: 'Surrender?', subtitle: "Surrendering will turn you into a loser. Are you a f****** loser?" },
+                    options:
+                        <React.Fragment>
+                            <button onClick={() => setIsFinishModalActive(false)}>
+                                <Exit />
+                                Cancel
+                            </button>
+                            <button onClick={() => handleLogout()}>
+                                <Lose />
+                                Yes
+                            </button>
+                        </React.Fragment>
+                });
                 break;
             default:
                 break;
@@ -112,33 +117,53 @@ const Home = () => {
 
     useEffect(() => {
         !user && history.push('/login');
+        let isMounted = true;
         if (user) {
             API.SOCKET.VALIDATE_SESSION({ roomId: Cookies.get('roomId'), user: Cookies.get('user') });
         }
-        API.SOCKET.LINK.on("logout-response", (params) => { // logged out manually
-            setModal(params.nickname === JSON.parse(user).nickname ? 'LOSE' : 'WIN-DEFAULT');
-        });
         API.SOCKET.LINK.on('logout', (res) => { // for unexpected errors
-            clearCookies();
-            history.push('/login')
+            isMounted && clearCookies();
+            isMounted && history.push('/login')
         });
+        return () => {
+            isMounted = false;
+            API.SOCKET.LINK.off('logout');
+        };
     }, [])
 
     useEffect(() => {
-        API.SOCKET.LINK.on('validate-response', (res) => {
-            setData(res);
+        let isMounted = true;
+        API.SOCKET.LINK.on("logout-response", (params) => { // logged out manually
+            isMounted && setModal(params.nickname === JSON.parse(Cookies.get('user')).nickname ? 'LOSE' : 'WIN-DEFAULT');
         });
-        API.SOCKET.LINK.on('error', err => handleErrors(err));
-        API.SOCKET.LINK.on('connect_error', err => handleErrors(err));
-        API.SOCKET.LINK.on('connect_failed', err => handleErrors(err));
-        API.SOCKET.LINK.on('disconnect', err => handleErrors(err));
-        const handleErrors = (err) => {
-            // Cookies.remove('roomId');
-            // Cookies.remove('user');
-            // Cookies.remove('opponent');
-            // history.push('/login');
-        }
+        return () => {
+            isMounted = false;
+            clearCookies();
+        };
+    }, [])
+
+    useEffect(() => {
+        let isMounted = true;
+        API.SOCKET.LINK.on('validate-response', (res) => {
+            isMounted && setData(res);
+        });
+        return () => {
+            isMounted = false;
+            API.SOCKET.LINK.off('validate-response');
+        };
     }, [data])
+
+
+    // API.SOCKET.LINK.on('error', err => handleErrors(err));
+    // API.SOCKET.LINK.on('connect_error', err => handleErrors(err));
+    // API.SOCKET.LINK.on('connect_failed', err => handleErrors(err));
+    // API.SOCKET.LINK.on('disconnect', err => handleErrors(err));
+    // const handleErrors = (err) => {
+    // Cookies.remove('roomId');
+    // Cookies.remove('user');
+    // Cookies.remove('opponent');
+    // history.push('/login');
+    // }
 
     return (
         <React.Fragment>
@@ -150,14 +175,14 @@ const Home = () => {
                     {data ? <Chat user={user} opponent={opponent} data={data} handleFinishModal={handleFinishModal} /> : "Loading"}
                 </section>
             </div>
-            <div className={`finish-modal ${isFinisModalActive ? 'active' : ''}`}>
+            <div className={`finish-modal ${isFinishModalActive ? 'active' : ''}`}>
                 <div className="modal-container">
                     <header>
-                        {finishImage}
-                        <h1>{finishMessage && finishMessage.title}</h1>
-                        <p>{finishMessage && finishMessage.subtitle}</p>
+                        {finishModal.image}
+                        <h1>{finishModal.message && finishModal.message.title}</h1>
+                        <p>{finishModal.message && finishModal.message.subtitle}</p>
                     </header>
-                    <div className="options">{finishOptions}</div>
+                    <div className="options">{finishModal.options}</div>
                 </div>
             </div>
         </React.Fragment>
