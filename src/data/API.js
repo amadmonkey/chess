@@ -6,8 +6,6 @@ const base_local = "http://localhost:8080/";
 
 const socket = SocketClient(base_local);
 
-// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
-
 const createRoom = (params) => {
     socket.emit('create-room-request', params);
 }

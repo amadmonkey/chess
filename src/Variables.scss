@@ -6,7 +6,8 @@ $brown-bg: #512900;
 $teal: teal;
 $purple: purple;
 
-$board-light: #fde5d0;
+// $board-light: #fff6f0;
+$board-light: #f5e5d9;
 $board-dark: #aa7143;
 
 $chat-main: #aa7143;
@@ -15,6 +16,19 @@ $chat-user-bg: #8b8bee;
 $chat-oppo-bg: #84d3b5;
 $chat-input-bg: #d6d6d6;
 $chat-input-color: black;
+
+$dark-piece-body: #e7c7af;
+$dark-piece-body-shadow: #daa985;
+$dark-piece-outline: #f2d98d;
+$dark-piece-outline-shadow: #eec076;
+$dark-piece-clothes: #daa985;
+$dark-piece-clothes-shadow: #d2896f;
+
+$dark-piece-body: #c3753a;
+$dark-piece-body-shadow: #985b2e;
+$dark-piece-clothes: #985b2e;
+$dark-piece-clothes-shadow: #803f28;
+$blush: #ff8080;
 
 /********************************/
 /* mixins
@@ -48,16 +62,28 @@ $chat-input-color: black;
     }
 }
 
+@keyframes glow-new {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 @mixin glow-mixin($name, $color) {
     @keyframes #{$name} {
         0% {
-            filter: drop-shadow( 0 0 2px $color);
+            filter: drop-shadow( 0 0 3px $color);
         }
         50% {
-            filter: drop-shadow( 0 0 6px $color);
+            filter: drop-shadow( 0 0 8px $color);
         }
         100% {
-            filter: drop-shadow( 0 0 2px $color);
+            filter: drop-shadow( 0 0 3px $color);
         }
     }
 }
@@ -80,4 +106,20 @@ $chat-input-color: black;
 @keyframes orbit {
     from { transform: rotate(0deg) translateX(20px) rotate(0deg); }
     to   { transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@mixin for-phone-only {
+    @media (max-width: 599px) { @content; }
+}
+@mixin for-tablet-portrait-up {
+    @media (min-width: 600px) { @content; }
+}
+@mixin for-tablet-landscape-up {
+    @media (min-width: 900px) { @content; }
+}
+@mixin for-desktop-up {
+    @media (min-width: 1200px) { @content; }
+}
+@mixin for-big-desktop-up {
+    @media (min-width: 1800px) { @content; }
 }

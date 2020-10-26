@@ -4,21 +4,97 @@
     position: relative;
     overflow: hidden;
     height: 100%;
+    padding: 20px;
+
     .graveyard-container {
-        position: relative;
-        top: 50%;
+        position: absolute;
+        top: 48%;
         left: 50%;
         transform: translateY(-50%) translateX(-50%);
         max-width: 700px;
-        width: 90%;
+        width: 100%;
+        @include for-phone-only { // 599px
+        }
+        @include for-tablet-portrait-up { //600px
+        }
+        @include for-tablet-landscape-up { //900px
+            right: 0;
+            left: auto;
+            transform: translateY(-50%)
+        }
+        @include for-desktop-up { //1200px
+        }
+        @include for-big-desktop-up { //1800px
+            max-width: 800px;
+        }
+        .graveyard {
+            right: 0;
+            height: 40px;
+            width: 80%;
+            margin: 0 auto;
+            position: relative;
+            box-sizing: border-box;
+            border-radius: 30px;
+            padding: 5px;
+            box-sizing: border-box;
+            header {
+                position: absolute;
+                top: 50%;
+                display: inline-block;
+                height: 35px;
+                width: 35px;
+                border-radius: 50%;
+                box-shadow: 0 2px 3px black;
+                background-color: #fa4445;
+                transform: translateY(-50%);
+                > svg {
+                    height: 100%;
+                    width: auto;
+                    position: relative;
+                    top: 50%;
+                    left: 45%;
+                    transform: translate(-50%, -50%);
+                    filter: drop-shadow(0px 0px 1px black);
+                }
+            }
+            &.user {
+                margin-top: 30px;
+                padding-left: 40px !important;
+                header {
+                    left: 0;
+                }
+            }
+            &.opponent {
+                margin-bottom: 15px;
+                padding-right: 40px !important;
+                text-align: right;
+                header {
+                    right: 0;
+                }
+            }
+            > div {
+                height: 100%;
+                width: auto;
+                display: inline-block;
+                text-align: right;
+                svg {
+                    height: 100%;
+                    width: auto;
+                }
+            }
+            // $i: 0;
+            // $right: 20px;
+            // @for $i from 1 through 16 {
+            //     div:nth-child(#{$i}) {
+            //       left: $right * $i;
+            //     }
+            // }
+        }
     }
     .chess {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-        max-width: 700px;
-        width: 100%;
+        position: relative;
+        width: 80%;
+        margin: 0 auto;
         border: 8px solid $board-dark;
         box-shadow: -19px 19px 19px darken($board-light, 20%);
         border-radius: 15px;
@@ -34,6 +110,22 @@
                 &.light { .chess-piece.opponent { animation: glowz-for-light 2s linear infinite; } }
             }
         }
+        .tiles {
+            .tile {
+                &:after {
+                    content: '';
+                    pointer-events: none;   
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    top: 0;
+                    opacity: 0;
+                    z-index: 1;
+                    transition: 0.1s;
+                    background-color: rgba(56, 56, 56, 0.637);
+                }
+            }
+        }
         &.overlay {
             .tiles {
                 .tile {
@@ -43,15 +135,7 @@
                         }
                     }
                     &:after {
-                        content: '';
-                        pointer-events: none;
-                        position: absolute;
-                        height: 100%;
-                        width: 100%;
-                        top: 0;
                         opacity: 1;
-                        background-color: #00000081;
-                        z-index: 1;
                     }
                 }
             }
@@ -63,6 +147,7 @@
            .tile {
                 position: relative;
                 flex: 1 0 12%;
+                cursor: pointer;
                 @include transition(0.2s ease);
                 &.dark {
                     background-color: $board-dark;
@@ -77,10 +162,16 @@
                     }
                 }
                 &:first-child {
-                    border-top-left-radius: 10px;
+                    border-top-left-radius: 5px;
+                }
+                &:nth-child(8) {
+                    border-top-right-radius: 5px;
                 }
                 &:last-child {
-                    border-bottom-right-radius: 10px;
+                    border-bottom-right-radius: 5px;
+                }
+                &:nth-child(57) {
+                    border-bottom-left-radius: 5px;
                 }
                 &:before {
                     content: "";
@@ -93,9 +184,10 @@
                     height: 100%;
                     text-align: center;
                     top: 0;
-                    padding: 10px;
+                    padding: 15%;
                     box-sizing: border-box;
                     z-index: 3;
+                    cursor: pointer;
                     @include transition(0.5s ease-in-out);
                     &:not(.opponent) {
                         cursor: grab;
@@ -113,8 +205,8 @@
         .hand {
             display: none;
             position: absolute;
-            height: 100px;
-            width: 100px;
+            height: 70px;
+            width: 70px;
             top: 0px;
             left: 0px;
             pointer-events: none;
@@ -125,13 +217,70 @@
                 filter: drop-shadow( 10px 10px 5px rgba(0, 0, 0, .7));
             }
         }
-    }
-    .graveyard {
-        svg {
-            height: 40px;
+        legend {
+            position: absolute;
+            text-align: center;
+            display: flex;
+            color: #b7845c;
+            font-size: 12px;
+            &.x {
+                width: 10px;
+                top: 0;
+                left: -30px;
+                height: 100%;
+                flex-direction: column;
+                > div {
+                    display: block;
+                    position: relative;
+                    flex-grow: 1;
+                    span {
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        transform: translateY(-50%);
+                    }
+                }
+            }
+            &.y {
+                height: 14px;
+                width: 100%;
+                bottom: -30px;
+                > span {
+                    flex-grow: 1;
+                }
+            }
         }
     }
 }
 
-@include glow-mixin(glowz-for-light, rgb(56, 56, 56));
-@include glow-mixin(glowz-for-dark, rgb(206, 206, 206));
+.copied {
+    padding: 14px;
+    width: 50%;
+    text-align: center;
+    pointer-events: none;
+    background: #5454ec;
+    border-radius: 20px;
+    color: #fff;
+    position: absolute;
+    bottom: 40px;
+    opacity: 0;
+    left: 50%;
+    margin: 0 auto;
+    transform: translateX(-50%);
+    z-index: 3;
+    @include transition(0.1s ease-in-out);
+    &.active {
+        bottom: 70px;
+        opacity: 1;
+    }
+}
+
+.sepia {
+    filter: brightness(1.2) sepia(1);
+}
+// .dark {
+//     filter: brightness(0.8);
+// }
+
+@include glow-mixin(glowz-for-light, yellow);
+@include glow-mixin(glowz-for-dark, yellow);

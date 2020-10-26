@@ -10,7 +10,7 @@
     .form-container {
         position: absolute;
         width: 500px;
-        height: 550px;
+        height: 600px;
         box-sizing: border-box;
         background: $board-light;
         border: 10px solid $board-dark;
@@ -18,18 +18,28 @@
         left: 50%;
         border-radius: 20px;
         transform: translate(-50%, -50%);
-        box-shadow: 0 0 200px darken($board-light, 20%) inset, 0 0 50px darken($board-light, 10%);
+        box-shadow: 0 0 200px darken($board-light, 20%) inset, -10px 10px 10px darken($board-light, 10%);
         header {
-            padding-top: 50px;
-            padding-bottom: 10px;
+            padding-top: 30px;
             text-align: center;
+            .main-title {
+                margin: 20px;
+                font-size: 35px;
+                color: rgb(221, 172, 38);
+                font-weight: bold;
+                text-shadow:
+                    3px 3px 0 #774b28,
+                    -1px -1px 0 #774b28,  
+                    1px -1px 0 #774b28,
+                    -1px 1px 0 #774b28,
+                    1px 1px 0 #774b28;
+            }
             svg {
                 width: 100px;
                 height: 100px;
             }
         }
         form {
-            padding: 30px;
             text-align: center;
             > * {
                 display: block;
@@ -42,31 +52,42 @@
                 font-size: 15px;
             }
             > input {
-                background-color: $chat-input-bg;
+                background-color: #e4b085;
                 height: 40px;
                 border: none;
                 padding: 5px 20px;
-                box-shadow: 0 0 10px darken($chat-input-bg, 10%) inset;
+                box-shadow: 0 0 10px darken(#e4b085, 10%) inset;
                 border-radius: 20px;
                 box-sizing: border-box;
-                color: $chat-input-color;
+                color: #e4e4e4;
+                &.error {
+                    border: 2px solid red;
+                }
                 &::placeholder {
-                    color: #818181;
+                    color: darken(#e4b085, 30%);
                 }
             }
             button {
                 border-radius: 40px;
                 border: none;
                 margin-top: 30px;
-                height: 50px;
+                height: 60px;
                 margin-left: auto;
                 margin-right: auto;
                 box-sizing: border-box;
-                border: 5px solid darken(#4a7dad, 20%);
                 background-color: #4a7dad;
                 font-weight: bold;
                 font-size: 15px;
-                color: darken(#4a7dad, 20%);
+                cursor: pointer;
+                box-shadow: 0 0 24px #4e4e4e inset, 0 2px 3px #4e4e4e;
+                color: lighten(#4a7dad, 30%);
+                &:hover {
+                    box-shadow: 0 0 10px #4e4e4e inset, 0 2px 3px #4e4e4e;
+                }
+            }
+            .form-error {
+                color: red;
+                font-size: 12px;
             }
         }
         footer {
@@ -90,7 +111,9 @@
         }
     }
     .login-overlay {
-        display: none;
+        display: block;
+        opacity: 0;
+        pointer-events: none;
         position: absolute;
         height: 100%;
         width: 100%;
@@ -98,6 +121,11 @@
         backdrop-filter: blur(8px);
         z-index: 2;
         text-align: center;
+        transition: 0.2s ease-in-out;
+        &.active {
+            opacity: 1;
+            pointer-events: all;
+        }
         > div {
             position: relative;
             height: 200px;
@@ -125,36 +153,41 @@
                     -1px 1px 0 #774b28,
                     1px 1px 0 #774b28;
             }
+            P {
+                margin: 20px 0;
+                line-height: 1.2;
+            }
             > div {
                 position: relative;
                 width: 150px;
                 margin: 20px auto;
                 .code-input {
                     font-size: 30px;
-                    width: 100px;
-                    padding: 5px;
+                    width: 110px;
                     border: 2px dotted black;
                     border-radius: 20px;
                     background-color: transparent;
                     text-align: center;
-                    padding-right: 40px;
                     cursor: pointer;
                 }
                 svg {
                     position: absolute;
-                    right: 15px;
+                    right: -15px;
                     height: 25px;
-                    top: 10px;
+                    top: 7px;
                 }
                 .copied {
-                    padding: 14px;
-                    background: #5454ec;
+                    padding: 20px;
+                    background: #d0ac28;
                     border-radius: 20px;
                     color: #fff;
                     position: absolute;
                     top: 70px;
                     opacity: 0;
                     /* margin: 0 auto; */
+                    width: 200px;
+                    height: 69px;
+                    box-sizing: border-box;
                     left: 50%;
                     transform: translateX(-50%);
                     @include transition(0.1s ease-in-out);

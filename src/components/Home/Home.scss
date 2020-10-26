@@ -6,8 +6,7 @@
     height: 100vh;
     background-color: $board-light;
     box-shadow: 0 0 200px darken($board-light, 50%) inset;
-    > section {
-        position: relative;
+    section {
         background: none;
         &.chess {
             flex-grow: 2;
@@ -15,6 +14,121 @@
         &.chat {
             flex-grow: 1;
             padding: 20px;
+            position: absolute;
+            right: 0;
+            transition: 0.2s ease-in-out;
+            height: 90%;
+            min-width: 350px;
+            pointer-events: none;
+            box-sizing: border-box;
+            @include for-tablet-landscape-up {
+                position: relative;
+                height: unset;
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.finish-modal {
+    display: block;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    backdrop-filter: blur(8px);
+    z-index: 7;
+    text-align: center;
+    transition: 0.2s ease-in-out;
+    .modal-container {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        background-color: $board-light;
+        width: 400px;
+        height: 400px;
+        border-radius: 30px;
+        border: 15px solid $board-dark;
+        box-shadow: 0 3px 4px $board-dark, 0 0 200px #dac26c inset;
+        transition: 0.2s ease-in-out;
+        header {
+            height: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            svg {
+                height: 70%;
+                width: 100%;
+            }
+            h1 {
+                font-size: 35px;
+                color: #ffc000;
+                font-weight: bold;
+                margin: 10px;
+                text-shadow:
+                    3px 3px 0 #774b28,
+                    -1px -1px 0 #774b28,  
+                    1px -1px 0 #774b28,
+                    -1px 1px 0 #774b28,
+                    1px 1px 0 #774b28;
+            }
+            p {
+                font-size: 14px;
+                width: 80%;
+                margin: 0 auto;
+                line-height: 1.2;
+            }
+        }
+        .options {
+            button {
+                height: 80px;
+                width: 80px;
+                border-radius: 10px;
+                border: none;
+                margin: 15px;
+                padding: 15px;
+                background-color: $board-dark;
+                color: #fff;
+                transition: 0.2s;
+                cursor: pointer;
+                svg {
+                    height: 70%;
+                    width: 100%;
+                    margin-bottom: 5px;
+                    transition: 0.2s;
+                    filter: drop-shadow(0 2px 3px rgb(128, 128, 128));
+                }
+                &:first-child {
+                    &:hover {
+                        transform: scale(1.2);
+                        background-color: #2751aa;
+                        svg {
+                            transform: rotate(10deg) scale(1.3);
+                        }
+                    }
+                }
+                &:last-child {
+                    &:hover {
+                        transform: scale(1.2);
+                        background-color: #dd3232;
+                    }
+                    svg {
+                        transform: rotate(10deg) scale(1.3);
+                    }
+                }
+            }
+        }
+    }
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+        .modal-container {
+            opacity: 1;
+            top: 50%
         }
     }
 }
