@@ -100,16 +100,28 @@
         border-radius: 15px;
         &.turn-user {
             .tile {
-                &.dark { .chess-piece:not(.opponent) { animation: glowz-for-dark 2s linear infinite; } }
-                &.light { .chess-piece:not(.opponent) { animation: glowz-for-light 2s linear infinite; } }
+                &.dark {
+                    .chess-piece:not(.opponent) {
+                        &.has-moves {
+                            animation: glowz-for-dark 2s linear infinite;
+                        }
+                    }
+                }
+                &.light {
+                    .chess-piece:not(.opponent) {
+                        &.has-moves {
+                            animation: glowz-for-light 2s linear infinite;
+                        }
+                    }
+                }
             }
         }
-        &.turn-opponent {
-            .tile {
-                &.dark { .chess-piece.opponent { animation: glowz-for-dark 2s linear infinite; } }
-                &.light { .chess-piece.opponent { animation: glowz-for-light 2s linear infinite; } }
-            }
-        }
+        // &.turn-opponent {
+        //     .tile {
+        //         &.dark { .chess-piece.opponent { animation: glowz-for-dark 2s linear infinite; } }
+        //         &.light { .chess-piece.opponent { animation: glowz-for-light 2s linear infinite; } }
+        //     }
+        // }
         .tiles {
             .tile {
                 &:after {
@@ -223,8 +235,6 @@
             position: absolute;
             height: 70px;
             width: 70px;
-            top: 0px;
-            left: 0px;
             pointer-events: none;
             z-index: 4;
             svg {

@@ -77,13 +77,13 @@ $blush: #ff8080;
 @mixin glow-mixin($name, $color) {
     @keyframes #{$name} {
         0% {
-            filter: drop-shadow( 0 0 3px $color);
+            filter: drop-shadow( 0 0 6px $color);
         }
         50% {
-            filter: drop-shadow( 0 0 8px $color);
+            filter: drop-shadow( 0 0 14px $color);
         }
         100% {
-            filter: drop-shadow( 0 0 3px $color);
+            filter: drop-shadow( 0 0 6px $color);
         }
     }
 }

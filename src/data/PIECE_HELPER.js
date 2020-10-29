@@ -57,7 +57,7 @@ const testConditions = (piece, tile, conditions) => { // class tile with each ru
     if(tile){ // if tile exists
         let isTileValid = true, stop = false, castling = false;
 
-        // since no one piece can topple an allied piece, check for this first before looping through conditions
+        // since no one piece can capture an allied piece, check for this first before looping through conditions
         if(tile.childNodes.length) {
             if(!tile.childNodes[0].classList.contains('opponent')) {
                 return { tile: null, stop: true, castling: false }
@@ -112,6 +112,8 @@ const testConditions = (piece, tile, conditions) => { // class tile with each ru
         return { tile: null, stop: true};
     }
 }
+
+
 
 const getValidTiles = (piece) => {
 

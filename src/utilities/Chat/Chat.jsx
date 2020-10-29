@@ -147,7 +147,7 @@ const Chat = (props) => {
                                                         <span className='user-text'>You</span> castled <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and <span className='user-text'>your rook</span> moved <span className='neutral-text'>{obj.rook.fromPosition} to {obj.rook.newPosition}</span>!
                                                     </React.Fragment> :
                                                     <React.Fragment>
-                                                        <span className='opponent-text'>{obj.user.nickname}</span> castled <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and <span className='opponent-text'>their rook</span> moved <span className='neutral-text'>{obj.rook.fromPosition} to {obj.rook.newPosition}</span>
+                                                        <span className='opponent-text'>{obj.user.nickname}</span> castled <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and <span className='opponent-text'>their rook</span> moved <span className='neutral-text'>{obj.rook.fromPosition} to {obj.rook.position}</span>
                                                     </React.Fragment>
                                             }
                                         </React.Fragment>
@@ -159,10 +159,10 @@ const Chat = (props) => {
                                             {
                                                 obj.user.nickname === user.nickname ?
                                                     <React.Fragment>
-                                                        <span className='user-text'>You</span> moved <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and toppled their <span className='opponent-text'>{obj.opponentPiece.pieceName}</span>!
+                                                        <span className='user-text'>You</span> moved <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and captured their <span className='opponent-text'>{obj.opponentPiece.pieceName}</span>!
                                                     </React.Fragment> :
                                                     <React.Fragment>
-                                                        <span className='opponent-text'>{obj.user.nickname}</span> moved <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and toppled <span className='user-text'>your {obj.opponentPiece.pieceName}</span>!
+                                                        <span className='opponent-text'>{obj.user.nickname}</span> moved <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and captured <span className='user-text'>your {obj.opponentPiece.pieceName}</span>!
                                                     </React.Fragment>
                                             }
                                         </div>
@@ -195,7 +195,7 @@ const Chat = (props) => {
                     <li id="typing"></li>
                 </ul>
                 <form className="chat-form" onSubmit={(e) => handleChatSubmit(e)}>
-                    <input className="chat-input" value={message} placeholder="Enter text here" onChange={(e) => handleTyping(e)} autoComplete="off" autoFocus />
+                    <input className="chat-input" value={message} maxLength="50" placeholder="Enter text here" onChange={(e) => handleTyping(e)} autoComplete="off" autoFocus />
                     <button type="submit"><Send /></button>
                 </form>
             </div >
