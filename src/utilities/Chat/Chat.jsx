@@ -21,12 +21,10 @@ import API from '../../data/API.js';
 import "./Chat.scss";
 
 const Chat = (props) => {
-    let d = props.data;
-    let timer;
+    let d = props.data, timer;
     let user = JSON.parse(Cookies.get('user'));
     let opponent = JSON.parse(Cookies.get('opponent'));
-    const code = useRef(null);
-    const messageBoxRef = useRef(null);
+    const code = useRef(null), messageBoxRef = useRef(null);
     const [turn, setTurn] = useState(d.turn);
     const [messages, setMessages] = useState(d.chat);
     const [message, setMessage] = useState("");
@@ -36,6 +34,7 @@ const Chat = (props) => {
     }
 
     const handleDone = (status) => {
+        props.handleNotif();
         props.handleFinishModal(status);
     }
 
@@ -52,6 +51,16 @@ const Chat = (props) => {
     const handleTyping = (e) => {
         setMessage(e.target.value);
         e.key !== "Enter" && API.SOCKET.CHAT.TYPING(user);
+    }
+
+    const copyToClipboard = (e) => {
+        code.current.select();
+        document.execCommand('copy');
+    }
+
+    const collapse = (e) => {
+        let parent = e.currentTarget.parentNode;
+        parent.classList.contains('hidden') ? parent.classList.remove('hidden') : parent.classList.add('hidden')
     }
 
     const scrollMessagesToBottom = () => {
@@ -84,22 +93,13 @@ const Chat = (props) => {
                 clearTimeout(timer);
                 document.getElementById('typing').textContent = "";
             }
+            props.handleNotif();
         });
         return () => {
             isMounted = false;
             API.SOCKET.LINK.off("chat-response");
         }
     }, [])
-
-    const copyToClipboard = (e) => {
-        code.current.select();
-        document.execCommand('copy');
-    }
-
-    const collapse = (e) => {
-        let parent = e.currentTarget.parentNode;
-        parent.classList.contains('hidden') ? parent.classList.remove('hidden') : parent.classList.add('hidden')
-    }
 
     useEffect(scrollMessagesToBottom, [messages]);
 

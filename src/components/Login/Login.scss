@@ -44,7 +44,7 @@
             > * {
                 display: block;
                 margin: 10px;
-                width: 250px;
+                width: 220px;
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -57,7 +57,7 @@
                 input {
                     background-color: #e4b085;
                     height: 40px;
-                    width: 30px;
+                    width: 25px;
                     border: none;
                     font-size: 20px;
                     text-align: center;
@@ -75,11 +75,13 @@
             }
             > input {
                 background-color: #e4b085;
-                height: 40px;
+                height: 50px;
+                text-align: center;
+                font-size: 24px;
                 border: none;
                 padding: 5px 20px;
                 box-shadow: 0 0 10px darken(#e4b085, 10%) inset;
-                border-radius: 20px;
+                border-radius: 15px;
                 box-sizing: border-box;
                 color: #e4e4e4;
                 &.error {

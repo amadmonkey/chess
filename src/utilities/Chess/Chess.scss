@@ -5,7 +5,202 @@
     overflow: hidden;
     height: 100%;
     padding: 20px;
-
+    .chess {
+        position: relative;
+        width: 80%;
+        margin: 0 auto;
+        border: 8px solid $board-dark;
+        box-shadow: -19px 19px 19px darken($board-light, 20%);
+        border-radius: 15px;
+        .tiles {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap; 
+            .tile {
+                position: relative;
+                flex: 1 0 12%;
+                cursor: pointer;
+                box-sizing: border-box;
+                // @include transition(0.2s);
+                &.dark {
+                    background-color: $board-dark;
+                    &:hover {
+                        background-color: lighten($board-dark, 5%);
+                    }
+                }
+                &.light {
+                    background-color: $board-light;
+                    &:hover {
+                        background-color: lighten($board-light, 5%);
+                    }
+                }
+                &:first-child {
+                    border-top-left-radius: 5px;
+                }
+                &:nth-child(8) {
+                    border-top-right-radius: 5px;
+                }
+                &:last-child {
+                    border-bottom-right-radius: 5px;
+                }
+                &:nth-child(57) {
+                    border-bottom-left-radius: 5px;
+                }
+                &:before {
+                    content: "";
+                    display: block;
+                    padding-top: 100%;
+                }
+                .chess-piece {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    text-align: center;
+                    top: 0;
+                    padding: 15%;
+                    box-sizing: border-box;
+                    z-index: 3;
+                    cursor: pointer;
+                    // @include transition(0.5s ease-in-out);
+                    &:not(.opponent) {
+                        cursor: grab;
+                    }
+                    &.moving {
+                        opacity: 0.3;
+                    }
+                    svg {
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+                &:after {
+                    content: '';
+                    pointer-events: none;   
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    top: 0;
+                    opacity: 0;
+                    z-index: 1;
+                    transition: 0.1s;
+                    background-color: rgba(56, 56, 56, 0.637);
+                }
+                &.CASTLE {
+                    &.valid-tile {
+                        &:after {
+                            box-sizing: border-box;
+                            background: url(../../img/chess-castling.svg) left center no-repeat;
+                            vertical-align: middle;
+                            background-size: 100% 60%;
+                        }
+                    }
+                }
+                &.BATTLE {
+                    &.valid-tile {
+                        &:after {
+                            box-sizing: border-box;
+                            background: url(../../img/chat-blades.svg) bottom right no-repeat;
+                            vertical-align: middle;
+                            background-size: 50% 50%;
+                            z-index: 10;
+                        }
+                    }
+                }
+            }
+        }
+        &.turn-user {
+            .tile {
+                &.dark {
+                    .chess-piece:not(.opponent) {
+                        &.has-moves {
+                            animation: glowz-for-dark 2s linear infinite;
+                        }
+                    }
+                }
+                &.light {
+                    .chess-piece:not(.opponent) {
+                        &.has-moves {
+                            animation: glowz-for-light 2s linear infinite;
+                        }
+                    }
+                }
+            }
+        }
+        &.overlay {
+            .tiles {
+                .tile {
+                    &.valid-tile {
+                        border: 3px solid rgb(23, 252, 80);
+                        // animation: shimmer 3s linear infinite forwards;
+                        // background: linear-gradient(to right, transparent 20%, lighten($board-dark, 10%), transparent 50%);
+                        // background-size: 1200px 100%;
+                        &:after {
+                            opacity: 1;
+                            background-color: transparent;
+                        }
+                    }
+                    &:after {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        .hand {
+            display: none;
+            position: absolute;
+            height: 70px;
+            width: 70px;
+            pointer-events: none;
+            z-index: 4;
+            transition: 0.5s transform;
+            transform: rotate(0deg);
+            transform-origin: top center;
+            &.left {
+                transform: rotate(-45deg);
+            }
+            &.right {
+                transform: rotate(45deg);
+            }
+            svg {
+                height: 100%;
+                width: 100%;
+                filter: drop-shadow( 10px 10px 5px rgba(0, 0, 0, .7));
+            }
+        }
+        legend {
+            position: absolute;
+            text-align: center;
+            display: flex;
+            color: #b7845c;
+            font-size: 12px;
+            &.x {
+                width: 10px;
+                top: 0;
+                left: -30px;
+                height: 100%;
+                flex-direction: column;
+                > div {
+                    display: block;
+                    position: relative;
+                    flex-grow: 1;
+                    span {
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        transform: translateY(-50%);
+                    }
+                }
+            }
+            &.y {
+                height: 14px;
+                width: 100%;
+                bottom: -30px;
+                > span {
+                    flex-grow: 1;
+                }
+            }
+        }
+    }
     .graveyard-container {
         position: absolute;
         top: 48%;
@@ -82,199 +277,6 @@
                     width: auto;
                 }
             }
-            // $i: 0;
-            // $right: 20px;
-            // @for $i from 1 through 16 {
-            //     div:nth-child(#{$i}) {
-            //       left: $right * $i;
-            //     }
-            // }
-        }
-    }
-    .chess {
-        position: relative;
-        width: 80%;
-        margin: 0 auto;
-        border: 8px solid $board-dark;
-        box-shadow: -19px 19px 19px darken($board-light, 20%);
-        border-radius: 15px;
-        &.turn-user {
-            .tile {
-                &.dark {
-                    .chess-piece:not(.opponent) {
-                        &.has-moves {
-                            animation: glowz-for-dark 2s linear infinite;
-                        }
-                    }
-                }
-                &.light {
-                    .chess-piece:not(.opponent) {
-                        &.has-moves {
-                            animation: glowz-for-light 2s linear infinite;
-                        }
-                    }
-                }
-            }
-        }
-        // &.turn-opponent {
-        //     .tile {
-        //         &.dark { .chess-piece.opponent { animation: glowz-for-dark 2s linear infinite; } }
-        //         &.light { .chess-piece.opponent { animation: glowz-for-light 2s linear infinite; } }
-        //     }
-        // }
-        .tiles {
-            .tile {
-                &:after {
-                    content: '';
-                    pointer-events: none;   
-                    position: absolute;
-                    height: 100%;
-                    width: 100%;
-                    top: 0;
-                    opacity: 0;
-                    z-index: 1;
-                    transition: 0.1s;
-                    background-color: rgba(56, 56, 56, 0.637);
-                }
-                &.castling-tile {
-                    &.valid-tile {
-                        &:after {
-                            box-sizing: border-box;
-                            background: url(../../img/chess-castling.svg) left center no-repeat;
-                            vertical-align: middle;
-                            background-size: 100% 60%;
-                        }
-                    }
-                }
-            }
-        }
-        &.overlay {
-            .tiles {
-                .tile {
-                    &.valid-tile {
-                        &:after {
-                            opacity: 0;
-                        }
-                        &.castling-tile {
-                            &:after {
-                                opacity: 1;
-                                background-color: transparent;
-                            }
-                        }
-                    }
-                    &:after {
-                        opacity: 1;
-                    }
-                }
-            }
-        }
-        .tiles {
-           display: flex;
-           flex-direction: row;
-           flex-wrap: wrap; 
-           .tile {
-                position: relative;
-                flex: 1 0 12%;
-                cursor: pointer;
-                @include transition(0.2s ease);
-                &.dark {
-                    background-color: $board-dark;
-                    &:hover {
-                        background-color: lighten($board-dark, 5%);
-                    }
-                }
-                &.light {
-                    background-color: $board-light;
-                    &:hover {
-                        background-color: lighten($board-light, 5%);
-                    }
-                }
-                &:first-child {
-                    border-top-left-radius: 5px;
-                }
-                &:nth-child(8) {
-                    border-top-right-radius: 5px;
-                }
-                &:last-child {
-                    border-bottom-right-radius: 5px;
-                }
-                &:nth-child(57) {
-                    border-bottom-left-radius: 5px;
-                }
-                &:before {
-                    content: "";
-                    display: block;
-                    padding-top: 100%;
-                }
-                .chess-piece {
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
-                    text-align: center;
-                    top: 0;
-                    padding: 15%;
-                    box-sizing: border-box;
-                    z-index: 3;
-                    cursor: pointer;
-                    @include transition(0.5s ease-in-out);
-                    &:not(.opponent) {
-                        cursor: grab;
-                    }
-                    &.moving {
-                        opacity: 0.3;
-                    }
-                    svg {
-                        height: 100%;
-                        width: 100%;
-                    }
-                }
-           }
-        }
-        .hand {
-            display: none;
-            position: absolute;
-            height: 70px;
-            width: 70px;
-            pointer-events: none;
-            z-index: 4;
-            svg {
-                height: 100%;
-                width: 100%;
-                filter: drop-shadow( 10px 10px 5px rgba(0, 0, 0, .7));
-            }
-        }
-        legend {
-            position: absolute;
-            text-align: center;
-            display: flex;
-            color: #b7845c;
-            font-size: 12px;
-            &.x {
-                width: 10px;
-                top: 0;
-                left: -30px;
-                height: 100%;
-                flex-direction: column;
-                > div {
-                    display: block;
-                    position: relative;
-                    flex-grow: 1;
-                    span {
-                        position: absolute;
-                        top: 50%;
-                        left: 0;
-                        transform: translateY(-50%);
-                    }
-                }
-            }
-            &.y {
-                height: 14px;
-                width: 100%;
-                bottom: -30px;
-                > span {
-                    flex-grow: 1;
-                }
-            }
         }
     }
 }
@@ -309,4 +311,4 @@
 // }
 
 @include glow-mixin(glowz-for-light, yellow);
-@include glow-mixin(glowz-for-dark, yellow);
+@include glow-mixin(glowz-for-dark, rgb(255, 187, 0));

@@ -20,6 +20,7 @@ import './Home.scss';
 
 const Home = () => {
     let history = useHistory();
+    let notifsCount = 0, intervalId, isTabOnFocus = false;
     let user = Cookies.get('user') ? Cookies.get('user') : null;
     let opponent = Cookies.get('opponent') ? Cookies.get('user') : null;
 
@@ -38,6 +39,12 @@ const Home = () => {
 
     const backToLogin = () => {
         history.push('/login');
+    }
+
+    const clearCookies = () => {
+        Cookies.remove('roomId');
+        Cookies.remove('user');
+        Cookies.remove('opponent');
     }
 
     const setModal = (status) => {
@@ -107,12 +114,7 @@ const Home = () => {
             default:
                 break;
         }
-    }
-
-    const clearCookies = () => {
-        Cookies.remove('roomId');
-        Cookies.remove('user');
-        Cookies.remove('opponent');
+        checkNotifs();
     }
 
     useEffect(() => {
@@ -153,17 +155,62 @@ const Home = () => {
         };
     }, [data])
 
+    useEffect(() => {
+        let isMounted = true;
+        const handleErrors = (err) => {
+            clearCookies();
+            history.push('/login');
+        }
+        if (isMounted) {
+            API.SOCKET.LINK.on('error', err => handleErrors(err));
+            API.SOCKET.LINK.on('connect_error', err => handleErrors(err));
+            API.SOCKET.LINK.on('connect_failed', err => handleErrors(err));
+            API.SOCKET.LINK.on('disconnect', err => handleErrors(err));
+        }
+        return () => {
+            API.SOCKET.LINK.off('error', err => handleErrors(err));
+            API.SOCKET.LINK.off('connect_error', err => handleErrors(err));
+            API.SOCKET.LINK.off('connect_failed', err => handleErrors(err));
+            API.SOCKET.LINK.off('disconnect', err => handleErrors(err));
+        }
+    }, [])
 
-    // API.SOCKET.LINK.on('error', err => handleErrors(err));
-    // API.SOCKET.LINK.on('connect_error', err => handleErrors(err));
-    // API.SOCKET.LINK.on('connect_failed', err => handleErrors(err));
-    // API.SOCKET.LINK.on('disconnect', err => handleErrors(err));
-    // const handleErrors = (err) => {
-    // Cookies.remove('roomId');
-    // Cookies.remove('user');
-    // Cookies.remove('opponent');
-    // history.push('/login');
-    // }
+    const checkNotifs = () => {
+        if (!isTabOnFocus) {
+            notifsCount = notifsCount === 9 ? 9 : notifsCount + 1;
+            console.log('tab is not on focus');
+            document.title = `(${notifsCount === 9 ? `${notifsCount}+` : notifsCount}) Just Another Chess App`;
+            document.getElementById('favicon').href = `${process.env.PUBLIC_URL}/favicon.png`;
+            setTitleInterval();
+        } else {
+            notifsCount = 0;
+            clearInterval(intervalId);
+            console.log('tab is on focus');
+            document.title = 'Just Another Chess App';
+            document.getElementById('favicon').href = `${process.env.PUBLIC_URL}/pawn.svg`;
+        }
+    }
+
+    const setTitleInterval = () => {
+        let title = "Just Another Chess App";
+        clearInterval(intervalId);
+        intervalId = setInterval(() => document.title = document.title.includes("(") ? title : `(${notifsCount === 9 ? `${notifsCount}+` : notifsCount}) ${title}`, 3000);
+        console.log('interval set');
+    }
+
+    useEffect(() => {
+        const tabOnFocus = () => {
+            isTabOnFocus = true;
+            checkNotifs();
+        }
+        const tabOnBlur = () => isTabOnFocus = false;
+        window.addEventListener("focus", tabOnFocus);
+        window.addEventListener("blur", tabOnBlur);
+        return () => {
+            window.removeEventListener("focus", tabOnFocus);
+            window.removeEventListener("blur", tabOnBlur);
+        }
+    })
 
     return (
         <React.Fragment>
@@ -172,7 +219,7 @@ const Home = () => {
                     {data ? <Chess user={user} opponent={opponent} data={data} /> : "Loading"}
                 </section>
                 <section className="section chat">
-                    {data ? <Chat user={user} opponent={opponent} data={data} handleFinishModal={handleFinishModal} /> : "Loading"}
+                    {data ? <Chat user={user} opponent={opponent} data={data} handleFinishModal={handleFinishModal} handleNotif={checkNotifs} /> : "Loading"}
                 </section>
             </div>
             <div className={`finish-modal ${isFinishModalActive ? 'active' : ''}`}>

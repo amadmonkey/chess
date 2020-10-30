@@ -41,7 +41,7 @@ const Chess = (props) => {
                     }
                 } else { // if clicked on a user piece
                     if (!holdingPiece) { // if not holding any piece then pick up
-                        if (piece.validTiles.length) {
+                        if (piece.validTiles.length > 1) {
                             MOVE.START(piece);
                         }
                     } else { // if already holding a piece
@@ -57,33 +57,38 @@ const Chess = (props) => {
         }
     }
 
+    // const setTileTypes = (tiles) => {
+    //     tiles.forEach((obj) => {
+    //         let typeClass = '';
+    //         switch (obj.type) {
+    //             case d.constants.MOVE_TYPE.battle: return typeClass = 'battle-tile';
+    //             case d.constants.MOVE_TYPE.castle: return typeClass = 'castling-tile';
+    //             case d.constants.MOVE_TYPE.self: return typeClass = 'self-tile';
+    //             case d.constants.MOVE_TYPE.move:
+    //             default: break;
+    //         }
+    //         getDomById(`t-${obj.tile}`).classList.add('valid-tile', typeClass);
+    //     });
+    // }
+
     const showValidTiles = (tiles) => {
-        if (!holdingPiece && tiles.length && turn === user.isLight) {
+        if (!holdingPiece && tiles.length > 1 && turn === user.isLight) {
             getDomById('chess').classList.add('overlay');
             tiles.forEach((obj) => {
-                if (obj.castle) {
-                    getDomById(`t-${obj.tile}`).classList.add('castling-tile');
-                } else {
-                    getDomById(`t-${obj.tile}`).classList.remove('castling-tile');
-                }
-                getDomById(`t-${obj.tile}`).classList.add('valid-tile');
+                getDomById(`t-${obj.tile}`).classList.add('valid-tile', obj.type);
             });
         }
     }
 
-    const removeValidTiles = () => {
-        if (!holdingPiece) {
+    const removeValidTiles = (tiles) => {
+        if (!holdingPiece && tiles) {
             getDomById('chess').classList.remove('overlay');
-            document.querySelectorAll('.tile').forEach((obj) => {
-                obj.classList.remove('valid-tile');
-            });
+            document.querySelectorAll('.tile').forEach(obj => obj.classList.remove(...Object.values(d.constants.MOVE_TYPE), 'valid-tile'));
         }
     }
 
     let oldX = 0
     const movePiece = (e) => {
-        // console.log(e.pageX < oldX ? 'left' : 'right');
-        // oldX = e.pageX;
         let currentHand = handRef.current.style;
         let boundingClientRect = getDomById('chess').getBoundingClientRect();
         let left = boundingClientRect.left + (getDomById('hand').offsetHeight / 1.5);
@@ -91,6 +96,10 @@ const Chess = (props) => {
         currentHand.left = `${e.pageX - left}px`;
         currentHand.top = `${e.pageY - top}px`;
         currentHand.display = "block";
+        // handRef.current.classList.remove('left', 'right');
+        // handRef.current.classList.add(e.pageX < oldX ? 'left' : 'right');
+        // setTimeout(() => handRef.current.classList.remove('left', 'right'), 500);
+        // oldX = e.pageX;
     }
 
     const MOVE = {
@@ -105,7 +114,7 @@ const Chess = (props) => {
             document.removeEventListener('mousemove', movePiece);
             holdingPiece = null;
             getDomById(piece.id).classList.remove('moving');
-            removeValidTiles();
+            removeValidTiles(piece.validTiles);
             let currentHand = handRef.current.style;
             currentHand.left = '0px';
             currentHand.top = '0px';
@@ -117,6 +126,8 @@ const Chess = (props) => {
         let isMounted = true;
         API.SOCKET.LINK.on('chess-move-response', (turn, userSet, opponentSet, done) => {
             if (isMounted) {
+                console.log(userSet);
+                console.log(opponentSet);
                 setTurn(turn);
                 if (userSet[0].isLight === user.isLight) {
                     setUserSet(userSet);
@@ -158,7 +169,7 @@ const Chess = (props) => {
                 let user_piece = userSet.filter(obj => obj.active && obj.position === position)[0];
 
                 if (user_piece) {
-                    piece = createPiece({ id: user_piece.id, style: { cursor: user_piece.validTiles.length ? 'pointer' : 'not-allowed' }, className: `chess-piece ${user_piece.validTiles.length ? 'has-moves' : ''}`, onMouseOver: (e) => showValidTiles(user_piece.validTiles), onMouseLeave: () => removeValidTiles() }, PIECE.GET.image(user_piece))
+                    piece = createPiece({ id: user_piece.id, style: { cursor: user_piece.validTiles.length > 1 ? 'grab' : 'not-allowed' }, className: `chess-piece ${user_piece.validTiles.length > 1 ? 'has-moves' : ''}`, onMouseOver: (e) => showValidTiles(user_piece.validTiles), onMouseLeave: () => removeValidTiles(user_piece.validTiles) }, PIECE.GET.image(user_piece))
                 } else if (opponent_piece) {
                     piece = createPiece({ id: opponent_piece.id, className: `chess-piece opponent` }, PIECE.GET.image(opponent_piece))
                 }
