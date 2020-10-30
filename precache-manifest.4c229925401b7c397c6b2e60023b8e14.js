@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "e0405340299d96decb0e6dcdfc23242f",
+    "revision": "a79d55f25cd2a099e6dfd70a016ebdbb",
     "url": "/chess/index.html"
   },
   {
-    "revision": "e7c1b82f343e681de1a7",
-    "url": "/chess/static/css/main.16f73014.chunk.css"
+    "revision": "bad9388c926e1a079d01",
+    "url": "/chess/static/css/main.1d5cdea4.chunk.css"
   },
   {
-    "revision": "f7147fac6b903d5c1350",
-    "url": "/chess/static/js/2.22e76f73.chunk.js"
+    "revision": "48956b2c7e8c35e56a7e",
+    "url": "/chess/static/js/2.b07d724f.chunk.js"
   },
   {
     "revision": "4f00ef8916bc1113d1140153da13fbd7",
-    "url": "/chess/static/js/2.22e76f73.chunk.js.LICENSE.txt"
+    "url": "/chess/static/js/2.b07d724f.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "e7c1b82f343e681de1a7",
-    "url": "/chess/static/js/main.47908bbf.chunk.js"
+    "revision": "bad9388c926e1a079d01",
+    "url": "/chess/static/js/main.9db840c7.chunk.js"
   },
   {
     "revision": "fe54e1bce9cc9d1a3729",
@@ -36,24 +36,24 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/chess/static/media/caution.f7c0a6a0.svg"
   },
   {
-    "revision": "8570fd06b03535323f3511cc73d6333c",
-    "url": "/chess/static/media/chat-blades.8570fd06.svg"
+    "revision": "ce508c25b65b8736c629f987fd907b23",
+    "url": "/chess/static/media/chat-blades.ce508c25.svg"
   },
   {
-    "revision": "cbbe33322fd2a8a9e174268010cf2cb8",
-    "url": "/chess/static/media/chat-move.cbbe3332.svg"
+    "revision": "24b9679585883204d4a0ebf44df9211c",
+    "url": "/chess/static/media/chat-move.24b96795.svg"
   },
   {
-    "revision": "7dabc4c2ca255a5a504323478aa02b75",
-    "url": "/chess/static/media/chat-start.7dabc4c2.svg"
+    "revision": "cf719a286e7bbdf6c39d4a0dadccdf4a",
+    "url": "/chess/static/media/chat-start.cf719a28.svg"
   },
   {
     "revision": "a32f45ff366138328e16e89ef4c9032c",
     "url": "/chess/static/media/chess-broken.a32f45ff.svg"
   },
   {
-    "revision": "d359bdb7c9581830fc34d53b88f0c95a",
-    "url": "/chess/static/media/chess-castling.d359bdb7.svg"
+    "revision": "9c9f438103c3a1e83cf0752e866460ea",
+    "url": "/chess/static/media/chess-castling.9c9f4381.svg"
   },
   {
     "revision": "e5930f6f6ef74b3c49ffd70e57197c9f",
