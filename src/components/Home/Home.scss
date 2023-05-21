@@ -4,8 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     height: 100vh;
-    background-color: $board-light;
-    box-shadow: 0 0 200px darken($board-light, 50%) inset;
+    background-color: $white;
     section {
         background: none;
         &.chess {

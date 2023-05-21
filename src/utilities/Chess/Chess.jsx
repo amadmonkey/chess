@@ -87,7 +87,6 @@ const Chess = (props) => {
         }
     }
 
-    let oldX = 0
     const movePiece = (e) => {
         let currentHand = handRef.current.style;
         let boundingClientRect = getDomById('chess').getBoundingClientRect();
@@ -96,10 +95,6 @@ const Chess = (props) => {
         currentHand.left = `${e.pageX - left}px`;
         currentHand.top = `${e.pageY - top}px`;
         currentHand.display = "block";
-        // handRef.current.classList.remove('left', 'right');
-        // handRef.current.classList.add(e.pageX < oldX ? 'left' : 'right');
-        // setTimeout(() => handRef.current.classList.remove('left', 'right'), 500);
-        // oldX = e.pageX;
     }
 
     const MOVE = {
@@ -142,7 +137,7 @@ const Chess = (props) => {
             isMounted = false;
             API.SOCKET.LINK.off('chess-move-response');
         }
-    }, [turn, userSet]);
+    }, [turn, userSet, user]);
 
     useEffect(() => {
         if (turn === user.isLight) {
@@ -155,7 +150,7 @@ const Chess = (props) => {
                 }
             }, 1000);
         }
-    }, [turn])
+    }, [turn, user])
 
     useEffect(() => {
         let newTiles = [];
@@ -184,27 +179,25 @@ const Chess = (props) => {
     }, [userSet, opponentSet])
 
     return (
-        <div className="chess-container">
-            <div className="graveyard-container">
-                <div className="graveyard opponent">
-                    <header className="header"><Broken /></header>
-                    {userSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
-                </div>
-                <div id="chess" className={`chess ${turn === user.isLight ? 'turn-user' : ''}`}>
-                    <legend className="legend x">{xLegend}</legend>
-                    <legend className="legend y">{yLegend}</legend>
-                    <ul className="tiles">
-                        {tiles ? tiles : "Loading"}
-                    </ul>
-                    <div id="hand" className="hand" ref={handRef}>{onHandImage}</div>
-                </div>
-                <div className="graveyard user">
-                    <header className="header"><Broken /></header>
-                    {opponentSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
-                </div>
-                <div className="copied" ref={copied}>Your turn</div>
+        <section className="chess-container">
+            <div className="graveyard opponent">
+                <header className="header"><Broken /></header>
+                {userSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
             </div>
-        </div>
+            <div id="chess" className={`chess ${turn === user.isLight ? 'turn-user' : ''}`}>
+                <legend className="legend x">{xLegend}</legend>
+                <legend className="legend y">{yLegend}</legend>
+                <ul className="tiles">
+                    {tiles ? tiles : "Loading"}
+                </ul>
+                <div id="hand" className="hand" ref={handRef}>{onHandImage}</div>
+            </div>
+            <div className="graveyard user">
+                <header className="header"><Broken /></header>
+                {opponentSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
+            </div>
+            <div className="copied" ref={copied}>Your turn</div>
+        </section>
     )
 }
 

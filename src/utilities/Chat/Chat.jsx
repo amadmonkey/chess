@@ -1,6 +1,5 @@
 // app
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
 import Cookies from 'js-cookie';
 
 // components
@@ -72,15 +71,19 @@ const Chat = (props) => {
     }
 
     useEffect(() => {
+        let timer = null;
         API.SOCKET.LINK.on("chat-typing", (res) => {
-            clearTimeout(timer);
             document.getElementById('typing').textContent = res;
             timer = setTimeout(() => {
                 document.getElementById('typing').textContent = "";
             }, 3000);
             scrollMessagesToBottom();
         });
-    }, [])
+        return () => {
+            clearTimeout(timer);
+            API.SOCKET.LINK.off('chat-typing');
+        }
+    })
 
     useEffect(() => {
         let isMounted = true;

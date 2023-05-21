@@ -1,6 +1,6 @@
 // app
 import React from 'react';
-import {BrowserRouter as Router, HashRouter, Route, Switch} from 'react-router-dom';
+import {HashRouter, Route, Switch} from 'react-router-dom';
 
 // components
 import _ROUTES from "./data/ROUTES";

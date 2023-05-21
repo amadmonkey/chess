@@ -1,3 +1,24 @@
+// fonts
+@font-face {
+    font-family: 'Montserrat';
+    src: url(./fonts/Montserrat-Medium.ttf);
+}
+
+@font-face {
+    font-family: 'Montserrat-Light';
+    src: url(./fonts/Montserrat-Light.ttf);
+}
+
+@font-face {
+    font-family: 'Montserrat-SemiBold';
+    src: url(./fonts/Montserrat-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: 'CarbonBlock';
+    src: url(./fonts/CarbonBlock.ttf);
+}
+
 /********************************/
 /* variables
 /********************************/
@@ -5,10 +26,15 @@
 $brown-bg: #512900;
 $teal: teal;
 $purple: purple;
+$white: #f7f7f7;
 
-// $board-light: #fff6f0;
-$board-light: #f5e5d9;
-$board-dark: #aa7143;
+$play-button: #270325;
+
+// $board-light: #f5e5d9;
+// $board-dark: #aa7143;
+
+$board-light: #FF9329;
+$board-dark: #340932;
 
 $chat-main: #aa7143;
 $chat-bg: #f1f1f1;

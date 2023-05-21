@@ -7,10 +7,16 @@ body {
     [contenteditable="true"]:focus {
         outline: none;
     }
+    background-color: #f7f7f7;
     input:focus,
     select:focus,
     textarea:focus,
     button:focus {
         outline: none;
     }
+}
+
+input, span, button, label {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 3px;
 }

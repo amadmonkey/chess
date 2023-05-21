@@ -6,7 +6,6 @@ import Cookies from 'js-cookie';
 // components
 import { ReactComponent as KING_DARK } from '../../img/cute_dark/king.svg';
 import { ReactComponent as KING_LIGHT } from '../../img/cute_light/king.svg';
-import { ReactComponent as PAWN_DARK } from '../../img/cute_dark/pawn.svg';
 import { ReactComponent as CHESS_SEARCHING } from '../../img/chess-searching.svg';
 import { ReactComponent as Copy } from '../../img/copy.svg';
 import { ReactComponent as Error } from '../../img/error.svg';
@@ -81,7 +80,7 @@ const Login = () => {
         waitingModal.current.classList.toggle('active');
         document.getElementById('form-submit').disabled = false;
         document.getElementById('form-submit').classList.toggle('disabled');
-        document.getElementById('form-submit').textContent = "ENTER";
+        document.getElementById('form-submit').textContent = "PLAY";
         API.SOCKET.LEAVE_ROOM({ roomId: codeInput.current.value });
         codeInput.current.value = "";
     }
@@ -161,27 +160,30 @@ const Login = () => {
                     <h1 className="main-title">Just Another<br />Chess App</h1>
                 </header>
                 <form onSubmit={(e) => handleLogin(e)}>
-                    <label htmlFor="_nickname">Enter Nickname</label>
-                    <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus />
-                    <label htmlFor="_nickname" className="form-error">{nicknameError}</label>
-                    <label htmlFor="_roomId">Room ID</label>
-                    <div className="code-input-container">
-                        <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(0, 1)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 0)} />
-                        <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(1, 2)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 1)} />
-                        <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(2, 3)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 2)} />
-                        <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(3, 4)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 3)} />
+                    <div className="form-group">
+                        <label htmlFor="_nickname">Enter Nickname</label>
+                        <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus />
+                        <label htmlFor="_nickname" className="form-error">{nicknameError}</label>
                     </div>
-                    {/* <input placeholder="e.g: cH3s" maxLength="4" style={{ fontSize: '12px' }} type=" text" id="_roomId" value={roomId} onChange={(e) => handleInput(e)} /> */}
-                    <label htmlFor="_roomId" className="form-description">Leave this blank if you're making a lobby</label>
-                    <button type="submit" id="form-submit">ENTER</button>
+                    <div className="form-group">
+                        <label htmlFor="_roomId">Room ID</label>
+                        <div className="code-input-container">
+                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(0, 1)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 0)} />
+                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(1, 2)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 1)} />
+                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(2, 3)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 2)} />
+                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(3, 4)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 3)} />
+                        </div>
+                        <label htmlFor="_roomId" className="form-description">Leave this blank if you're making a lobby</label>
+                    </div>
+                    <button type="submit" id="form-submit">PLAY</button>
                 </form>
-                <footer>
+                <div className="links">
                     <a href="https://www.flaticon.com/authors/smashicons" target="_blank" rel="noopener noreferrer" title="Smashicons">Smashicons</a>
                     <a href="https://www.flaticon.com/authors/eucalyp" target="_blank" rel="noopener noreferrer" title="Eucalyp">Eucalyp</a>
                     <a href="https://www.flaticon.com/authors/freepik" target="_blank" rel="noopener noreferrer" title="Freepik">Freepik</a>
                     <a href="https://www.iconfinder.com">iconfinder</a>
-                </footer>
-                <span className="copyright"></span>
+                    <span className="copyright"></span>
+                </div>
             </div>
             <div className="login-overlay" ref={waitingModal}>
                 <div>

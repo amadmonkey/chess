@@ -21,14 +21,14 @@ const PIECE_NAMES = {
     KING: "KING"
 }
 
-const CONDITION = {
-    initial: 'INITIAL', // has to be the first move they make
-    no_piece: 'NO_PIECE', // no piece regardless of side
-    has_opponent: 'HAS_OPPONENT', // has opposing piece
-    no_ally: 'NO_ALLY', // has to have no ally piece
-    until_opponent: 'UNTIL_OPPONENT', // loop condition. stop if found an opponent 
-    castling: 'CASTLING' // loop condition. stop if found an opponent 
-}
+// const CONDITION = {
+//     initial: 'INITIAL', // has to be the first move they make
+//     no_piece: 'NO_PIECE', // no piece regardless of side
+//     has_opponent: 'HAS_OPPONENT', // has opposing piece
+//     no_ally: 'NO_ALLY', // has to have no ally piece
+//     until_opponent: 'UNTIL_OPPONENT', // loop condition. stop if found an opponent 
+//     castling: 'CASTLING' // loop condition. stop if found an opponent 
+// }
 
 const getPieceImage = (params) => {
     switch (params.pieceName) {
