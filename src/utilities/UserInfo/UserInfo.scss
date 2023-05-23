@@ -1,0 +1,41 @@
+@import "../../Variables.scss";
+
+.user-info {
+    display: flex;
+    box-sizing: border-box;
+    color: $board-light;
+    flex-direction: column;
+    gap: 10px;
+    > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        h1 {
+            font-size: 30px;
+        }
+        button {
+            cursor: pointer;
+            display: flex;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            background-color: rgb(226, 96, 96);
+            box-sizing: border-box;
+            color: $white;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 5px darken($white, 30%);
+            svg {
+                width: 15px;
+                fill: $white;
+            }
+            &:hover {
+                box-shadow: 0 0 10px darken(rgb(226, 96, 96), 10%) inset;
+            }
+        }
+    }
+    &.dark {
+        color: $board-dark;
+    }
+}

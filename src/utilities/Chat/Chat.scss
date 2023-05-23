@@ -2,143 +2,15 @@
 
 .chat-container {
     position: relative;
+    height: 100%;
     width: 100%;
-    height: 95%;
-    max-width: 400px;
-    border-radius: 30px;
+    max-width: 500px;
+    border-radius: 11px;
     background-color: $chat-bg;
-    box-shadow: 0 0 10px $board-dark;
+    box-shadow: 0 0 4px darken($white, 20%);
     transition: 0.2 ease-in-out;
     pointer-events: all;
-    .user-info {
-        height: 160px;
-        box-shadow: 0 0 30px darken($chat-main, 10%) inset, 0 -10px 70px darken($chat-main, 10%);
-        padding: 20px;
-        box-sizing: border-box;
-        background-color: $chat-main;
-        z-index: 2;
-        position: relative;
-        border-top-left-radius: 30px;
-        border-top-right-radius: 30px;
-        footer {
-            position: absolute;
-            bottom: 15px;
-            width: calc(100% - 40px);
-            .code-container {
-                position: relative;
-                display: inline-block;
-                .code-input {
-                    border: 1px dashed darken($chat-main, 30%);
-                    color: darken($chat-main, 30%);
-                    border-radius: 20px;
-                    width: auto;
-                    text-align: center;
-                    width: 65px;
-                    font-size: 15px;
-                    background: none;
-                    text-align: right;
-                    padding-right: 21px;
-                    box-sizing: border-box;
-                }
-                svg {
-                    position: absolute;
-                    height: 15px;
-                    right: 5px;
-                    top: 20%;
-                    fill: darken($chat-main, 30%);
-                }
-            }
-            .tools {
-                right: 0;
-                top: 2px;
-                float: right;
-                position: relative;
-                button {
-                    height: 15px;
-                    width: 15px;
-                    margin-left: 10px;
-                    padding: 0;
-                    background-color: transparent;
-                    border: none;
-                    cursor: pointer;
-                    &.surrender {
-                        svg {
-                            fill: #dc4444;
-                        }
-                    }
-                    svg {
-                        height: 100%;
-                        fill: darken($chat-main, 30%);
-                    }
-                }
-            }
-        }
-        .profile {
-            width: 80%;
-            text-align: center;
-            font-size: 20px;
-            margin: 50px 0;
-            margin: 0 auto;
-            margin-top: 20px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            > div:nth-child(2) {
-                font-weight: 900;
-                font-size: 30px;
-                z-index: 2;
-                position: relative;
-            }
-            > div:not(:nth-child(2)) {
-                position: relative;
-                padding: 5px 10px;
-                border-radius: 20px;
-                @include transition(0.2s ease-in-out);
-                &.active {
-                    z-index: 3;
-                    font-size: 20px;
-                    background-color: #e6d731;
-                }
-            }
-            .user-nickname {
-                display: inline;
-                background-color: #79481f;
-                .tag {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    right: -40px;
-                    font-size: 11px;
-                    background: #dc4444;
-                    padding: 5px;
-                    border-radius: 4px;
-                    font-weight: bold;
-                    color: rgb(218, 218, 218);
-                }
-            }
-            .opponent-nickname {
-                display: inline;
-                padding: 5px 10px;
-                background-color: #79481f;
-                > div {
-                    font-size: 11px;
-                }
-                .loading {
-                    border-radius: 20px;
-                    animation-duration: 2.2s;
-                    animation-fill-mode: forwards;
-                    animation-iteration-count: infinite;
-                    animation-name: shimmer;
-                    animation-timing-function: linear;
-                    background: #E5F0FB;
-                    background: linear-gradient(to right, transparent 20%, lighten($board-dark, 10%), transparent 50%);
-                    background-size: 1200px 100%;
-                    height: 25px;
-                }
-            }
-        }
-    }
-    
+    span { letter-spacing: unset; }
     .chat-messages {
         position: absolute;
         bottom: 50px;
@@ -146,24 +18,23 @@
         margin: 0;
         padding: 10px;
         width: 100%;
-        max-height: calc(100% - 210px);
+        max-height: calc(100% - 60px);
         box-sizing: border-box;
         font-size: 14px;
         z-index: 1;
         overflow-y: auto;
+        border-radius: 10px;
         @include transition(0.2s ease-in-out);
         li {
             position: relative;
-            width: 100%;
-            margin: 10px 0;
-            margin-bottom: 20px;
+            margin: 10px;
             line-height: 1.3;
             box-sizing: border-box;
             .message-item {
+                display: inline-block;
                 max-width: 70%;
                 border-radius: 10px;
                 padding: 15px 20px;
-                display: inline-block;
                 overflow-wrap: break-word;
                 width: auto;
                 .user-text {
@@ -175,68 +46,84 @@
                 .neutral-text {
                     color: #7b7bff;
                 }
-            }
-            &:before {
-                content: '';
-                position: absolute;
-                height: 20px;
-                width: 20px;
-                bottom: 2px;
-                z-index: -1;
+                &:before {
+                    content: '';
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    bottom: 20px;
+                    z-index: -1;
+                }
             }
             &.message-user {
-                text-align: right;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
                 .message-item {
                     background-color: $chat-user-bg;
                     color: lighten($chat-user-bg, 40%);
                     box-shadow: 0 0 20px darken($chat-user-bg, 10%) inset;
+                    &:before {
+                        box-shadow: 0 0 100px darken($chat-user-bg, 10%) inset;
+                        background-color: $chat-user-bg;
+                        right: 5px;
+                        transform: skew(10deg, 30deg);
+                    }
                 }
-                &:before {
-                    box-shadow: 0 0 100px darken($chat-user-bg, 10%) inset;
-                    background-color: $chat-user-bg;
-                    right: 5px;
-                    transform: skew(10deg, 30deg);
+                .time-ago {
+                    margin-top: 5px;
                 }
             }
             &.message-opponent {
-                text-align: left;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
                 .message-item {
                     background-color: $chat-oppo-bg;
                     color: lighten($chat-oppo-bg, 40%);
                     box-shadow: 0 0 20px darken($chat-oppo-bg, 10%) inset;
+                    &:before {
+                        box-shadow: 0 0 100px darken($chat-oppo-bg, 20%) inset;
+                        background-color: $chat-oppo-bg;
+                        left: 5px;
+                        transform: skew(-10deg, -30deg);
+                    }
                 }
-                &:before {
-                    box-shadow: 0 0 100px darken($chat-oppo-bg, 20%) inset;
-                    background-color: $chat-oppo-bg;
-                    left: 5px;
-                    transform: skew(-10deg, -30deg);
+                .time-ago {
+                    margin-top: 5px;
                 }
             }
             &.message-game {
                 text-align: center;
-                box-shadow: 0 2px 4px gray;
-                border-radius: 20px;
-                font-weight: bold;
-                font-size: 18px;
+                font-size: 14px;
                 color: #efc579;
-                text-shadow:
-                    1px 1px 0 rgb(48, 48, 48);
-                    // -1px -1px 0 rgb(37, 2, 36),  
-                    // 1px -1px 0  rgb(37, 2, 36),
-                    // -1px 1px 0  rgb(37, 2, 36),
-                    // 1px 1px 0  rgb(37, 2, 36);
-                svg {
-                    height: 80px;
-                    width: 100%;
-                    display: block;
-                    filter: drop-shadow(0px 3px 2px #636363);
-                    margin-bottom: 10px;
+                .message-item {
+                    max-width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    text-shadow: 0 0 1px rgb(107, 107, 107);
+                    padding: 3px;
+                    gap: 3px;
+                    .time-ago {
+                        margin-top: 5px;
+                    }
                 }
+                svg {
+                    height: 20px;
+                    width: unset;
+                    filter: drop-shadow(0px 3px 2px #636363);
+                }
+            }
+            .time-ago {
+                font-size: 12px;
+                color: darken($white, 30%);
             }
         }
         // https://codepen.io/GhostRider/pen/GHaFw
         &::-webkit-scrollbar-track {
-            // background-color: gray;
+            background-color: gray;
         }
         &::-webkit-scrollbar {
             width: 10px; // background-color: gray; 
@@ -252,19 +139,20 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 60px;
+        height: 70px;
         padding: 10px;
         box-sizing: border-box;
         .chat-input {
-            background-color: $chat-input-bg;
+            background-color: lighten($chat-input-bg, 10%);
             height: 100%;
             width: 100%;
             border: none;
             padding: 5px 20px;
             padding-right: 50px;
             box-shadow: 0 0 10px darken($chat-input-bg, 10%) inset;
-            border-radius: 20px;
+            border-radius: 7px;
             box-sizing: border-box;
+            letter-spacing: unset;
             color: $chat-input-color;
             &::placeholder {
                 color: #818181;
@@ -297,7 +185,6 @@
     @include for-tablet-landscape-up {
         height: 100%;
         pointer-events: all;
-        .user-info,
         .chat-messages,
         .chat-form {
             opacity: 1;
@@ -307,62 +194,12 @@
     &.hidden {
         height: 0;
         pointer-events: none;
-        .user-info,
         .chat-messages,
         .chat-form {
             opacity: 0;
         }
-        .chat-collapse {
-            background-color: #e2c12c;
-            &:before {
-                width: 23px;
-                transform: translateX(-55%) translateY(150%) rotate(20deg);
-                // top: 60%;
-                // left: 45%;
-            }
-            &:after {
-                width: 23px;
-                transform: translateX(-55%) translateY(-250%) rotate(-20deg);
-                // top: 35%;
-                // left: 45%;
-            }
-        }
     }
-
-    .chat-collapse {
-        pointer-events: all;
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #fa4445;
-        border: none;
-        padding: 0;
-        z-index: 5;
-        box-shadow: 0 3px 3px #3a3a3a;
-        transition: 0.2s ease-in-out;
-        &:before,
-        &:after {
-            content: '';
-            position: absolute;
-            width: 27px;
-            top: 50%;
-            left: 50%;
-            height: 2px;
-            background-color: #fff;
-            transition: 0.2s ease-in-out;
-        }
-        &:before {
-            transform: translateX(-50%) translateY(-50%) rotate(45deg);
-        }
-        &:after {
-            transform: translateX(-50%) translateY(-50%) rotate(-45deg);
-        }
-        @include for-tablet-landscape-up {
-            display: none;
-        }
+    #typing {
+        color: rgb(97, 97, 97);
     }
-
 }

@@ -1,51 +1,76 @@
 @import '../../Variables.scss';
 
 .chess-container {
+    display: flex;
+    flex-direction: column;
     position: relative;
-    overflow: hidden;
-    height: 100%;
+    width: 100%;
+    min-width: 300px;
+    max-width: 700px;
     padding: 20px;
+    @include for-desktop-up {
+        max-height: 70%;
+    }
     .chess {
         position: relative;
-        width: 80%;
-        margin: 0 auto;
-        box-shadow: -5px 7px 2px darken($white, 50%);
-        border-radius: 5px;
+        width: 100%;
+        box-shadow: 0 0 10px darken($white, 30%);
+        border-radius: 10px;
         .tiles {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap; 
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            justify-items: stretch;
             .tile {
                 position: relative;
-                flex: 1 0 12%;
                 cursor: pointer;
                 box-sizing: border-box;
-                // @include transition(0.2s);
+                min-height: 35px;
+                min-width: 35px;
+                max-height: 100px;
+                height: 100%;
+                width: 100%;
+                @include for-tablet-portrait-up {
+                    min-height: 60px;
+                    min-width: 60px;
+                }
+                @mixin for-tablet-landscape-up {
+                    min-height: 80px;
+                    min-width: 80px;
+                }
+                @include for-desktop-up {
+                    max-width: 90px;
+                    max-height: 90px;
+                    height: 100%;
+                    width: 100%;
+                }
                 &.dark {
-                    background-color: $board-dark;
-                    box-shadow: 0 0 30px darken($board-dark, 10%) inset;
+                    background-color: darken($board-dark, 2%);
+                    box-shadow: 0 0 30px darken($board-dark, 5%) inset;
                     &:hover {
                         background-color: lighten($board-dark, 5%);
                     }
                 }
                 &.light {
-                    background-color: lighten($board-light, 30%);
-                    box-shadow: 0 0 10px $board-light inset;
+                    background-color: lighten($board-light, 10%);
                     &:hover {
                         background-color: lighten($board-light, 5%);
                     }
                 }
                 &:first-child {
-                    border-top-left-radius: 5px;
+                    border-top-left-radius: 10px;
+                    &:after { border-top-left-radius: 10px; }
                 }
                 &:nth-child(8) {
-                    border-top-right-radius: 5px;
+                    border-top-right-radius: 10px;
+                    &:after { border-top-right-radius: 10px; }
                 }
                 &:last-child {
-                    border-bottom-right-radius: 5px;
+                    border-bottom-right-radius: 10px;
+                    &:after { border-bottom-right-radius: 10px; }
                 }
                 &:nth-child(57) {
-                    border-bottom-left-radius: 5px;
+                    border-bottom-left-radius: 10px;
+                    &:after { border-bottom-left-radius: 10px; }
                 }
                 &:before {
                     content: "";
@@ -83,12 +108,19 @@
                     top: 0;
                     opacity: 0;
                     z-index: 1;
-                    transition: 0.1s;
                     background-color: rgba(56, 56, 56, 0.637);
+                }
+                .interact-icon {
+                    pointer-events: none;   
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    top: 0;
+                    z-index: 6;
                 }
                 &.CASTLE {
                     &.valid-tile {
-                        &:after {
+                        .interact-icon {
                             box-sizing: border-box;
                             background: url(../../img/chess-castling.svg) left center no-repeat;
                             vertical-align: middle;
@@ -98,7 +130,7 @@
                 }
                 &.BATTLE {
                     &.valid-tile {
-                        &:after {
+                        .interact-icon {
                             box-sizing: border-box;
                             background: url(../../img/chat-blades.svg) bottom right no-repeat;
                             vertical-align: middle;
@@ -131,13 +163,54 @@
             .tiles {
                 .tile {
                     &.valid-tile {
-                        border: 3px solid rgb(23, 252, 80);
-                        // animation: shimmer 3s linear infinite forwards;
-                        // background: linear-gradient(to right, transparent 20%, lighten($board-dark, 10%), transparent 50%);
-                        // background-size: 1200px 100%;
+                        position: relative;
+                        z-index: 0;
+                        overflow: hidden;
                         &:after {
                             opacity: 1;
-                            background-color: transparent;
+                        }
+                        &::before {
+                            content: '';
+                            box-sizing: border-box;
+                            position: absolute;
+                            z-index: -2;
+                            left: -50%;
+                            top: -50%;
+                            width: 200%;
+                            height: 200%;
+                            background-color: $board-light;
+                            background-repeat: no-repeat;
+                            background-size: 50% 50%, 50% 50%;
+                            background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+                            animation: rotate 1s linear infinite;
+                        }
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            box-sizing: border-box;
+                            z-index: -1;
+                            left: 2px;
+                            top: 2px;
+                            width: calc(100% - 5px);
+                            height: calc(100% - 5px);
+                        }
+                        &.light {
+                            &::before {
+                                background-color: $board-light;
+                                background-image: linear-gradient(lighten($board-light, 40%), $board-light), linear-gradient(lighten($board-light, 40%), $board-light);
+                            }
+                            &::after {
+                                background-color: lighten($board-light, 10%);
+                            }
+                        }
+                        &.dark {
+                            &::before {
+                                background-color: $board-dark;
+                                background-image: linear-gradient(lighten($board-dark, 40%), $board-dark), linear-gradient(lighten($board-dark, 40%), $board-dark);
+                            }
+                            &::after {
+                                background-color: darken($board-dark, 2%);
+                            }
                         }
                     }
                     &:after {
@@ -202,81 +275,16 @@
             }
         }
     }
-    .graveyard-container {
-        position: absolute;
-        top: 48%;
-        left: 50%;
-        transform: translateY(-50%) translateX(-50%);
-        max-width: 700px;
-        width: 100%;
-        @include for-phone-only { // 599px
-        }
-        @include for-tablet-portrait-up { //600px
-        }
-        @include for-tablet-landscape-up { //900px
-            right: 0;
-            left: auto;
-            transform: translateY(-50%)
-        }
-        @include for-desktop-up { //1200px
-        }
-        @include for-big-desktop-up { //1800px
-            max-width: 800px;
-        }
-        .graveyard {
-            right: 0;
-            height: 40px;
-            width: 80%;
-            margin: 0 auto;
-            position: relative;
-            box-sizing: border-box;
-            border-radius: 30px;
-            padding: 5px;
-            box-sizing: border-box;
-            header {
-                position: absolute;
-                top: 50%;
-                display: inline-block;
-                height: 35px;
-                width: 35px;
-                border-radius: 50%;
-                box-shadow: 0 2px 3px black;
-                background-color: #fa4445;
-                transform: translateY(-50%);
-                > svg {
-                    height: 100%;
-                    width: auto;
-                    position: relative;
-                    top: 50%;
-                    left: 45%;
-                    transform: translate(-50%, -50%);
-                    filter: drop-shadow(0px 0px 1px black);
-                }
-            }
-            &.user {
-                margin-top: 30px;
-                padding-left: 40px !important;
-                header {
-                    left: 0;
-                }
-            }
-            &.opponent {
-                margin-bottom: 15px;
-                padding-right: 40px !important;
-                text-align: right;
-                header {
-                    right: 0;
-                }
-            }
-            > div {
+    .graveyard {
+        height: 25px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        > div {
+            height: 100%;
+            svg {
                 height: 100%;
                 width: auto;
-                display: inline-block;
-                text-align: right;
-                svg {
-                    height: 100%;
-                    width: auto;
-                }
             }
         }
     }
@@ -297,6 +305,7 @@
     margin: 0 auto;
     transform: translate(-50%, -50%);
     z-index: 3;
+    box-shadow: 0 0 10px darken($white, 80%);
     @include transition(0.1s ease-in-out);
     &.active {
         bottom: 50%;
@@ -307,9 +316,17 @@
 .sepia {
     filter: brightness(1.2) sepia(1);
 }
-// .dark {
-//     filter: brightness(0.8);
-// }
-
-@include glow-mixin(glowz-for-light, yellow);
+@include glow-mixin(glowz-for-light, rgb(255, 255, 255));
 @include glow-mixin(glowz-for-dark, rgb(255, 187, 0));
+
+@keyframes linearGradientMove {
+    100% {
+        background-position: 4px 0, -4px 100%, 0 -4px, 100% 4px;
+    }
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(1turn);
+	}
+}

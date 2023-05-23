@@ -6,9 +6,7 @@ import Cookies from 'js-cookie';
 // components
 import { ReactComponent as KING_DARK } from '../../img/cute_dark/king.svg';
 import { ReactComponent as KING_LIGHT } from '../../img/cute_light/king.svg';
-import { ReactComponent as CHESS_SEARCHING } from '../../img/chess-searching.svg';
 import { ReactComponent as Copy } from '../../img/copy.svg';
-import { ReactComponent as Error } from '../../img/error.svg';
 
 // data
 import API from '../../data/API.js';
@@ -42,8 +40,7 @@ const Login = () => {
             document.getElementById('form-submit').textContent = "";
             API.SOCKET.JOIN_ROOM({ nickname: nicknameValue, roomId: roomId });
         } else {
-            setNicknameError("Please enter any nickname");
-            // show errors
+            setNicknameError("Please enter nickname");
         }
     }
 
@@ -62,20 +59,29 @@ const Login = () => {
     }
 
     const copyToClipboard = (e) => {
-        codeInput.current.select();
-        document.execCommand('copy');
-        copied.current.classList.add('active');
-        setTimeout(() => {
-            if (copied) {
-                if (copied.current) {
-                    copied.current.classList.remove('active');
+        e.stopPropagation();
+        let timer = null;
+        navigator.clipboard.writeText(codeInput.current.value).then(() => {
+            copied.current.classList.add('active');
+            timer = setTimeout(() => {
+                if (copied) {
+                    if (copied.current) {
+                        copied.current.classList.remove('active');
+                    }
                 }
-            }
-        }, 1000);
+            }, 1000);
+        }).catch((err) => {
+            console.log(err);
+            alert("err"); // error
+        });
         e.target.blur();
+        return () => {
+            clearTimeout(timer);
+        }
     }
 
-    const handleLogout = () => {
+    const handleLogout = (e) => {
+        e.stopPropagation();
         Cookies.remove('roomId');
         waitingModal.current.classList.toggle('active');
         document.getElementById('form-submit').disabled = false;
@@ -157,21 +163,21 @@ const Login = () => {
                 <header>
                     <KING_DARK />
                     <KING_LIGHT />
-                    <h1 className="main-title">Just Another<br />Chess App</h1>
+                    <h1 className="main-title">Play Chess?</h1>
                 </header>
                 <form onSubmit={(e) => handleLogin(e)}>
                     <div className="form-group">
                         <label htmlFor="_nickname">Enter Nickname</label>
-                        <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus />
+                        <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" autoComplete="off" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus />
                         <label htmlFor="_nickname" className="form-error">{nicknameError}</label>
                     </div>
                     <div className="form-group">
                         <label htmlFor="_roomId">Room ID</label>
                         <div className="code-input-container">
-                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(0, 1)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 0)} />
-                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(1, 2)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 1)} />
-                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(2, 3)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 2)} />
-                            <input type="text" className="code-input-item" maxLength="1" value={roomId.substring(3, 4)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 3)} />
+                            <input type="text" className="code-input-item" maxLength="1" autoComplete="off" value={roomId.substring(0, 1)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 0)} />
+                            <input type="text" className="code-input-item" maxLength="1" autoComplete="off" value={roomId.substring(1, 2)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 1)} />
+                            <input type="text" className="code-input-item" maxLength="1" autoComplete="off" value={roomId.substring(2, 3)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 2)} />
+                            <input type="text" className="code-input-item" maxLength="1" autoComplete="off" value={roomId.substring(3, 4)} onPaste={(e) => parsePaste(e)} onChange={(e) => parseRoomId(e, 3)} />
                         </div>
                         <label htmlFor="_roomId" className="form-description">Leave this blank if you're making a lobby</label>
                     </div>
@@ -185,17 +191,16 @@ const Login = () => {
                     <span className="copyright"></span>
                 </div>
             </div>
-            <div className="login-overlay" ref={waitingModal}>
-                <div>
-                    <CHESS_SEARCHING className="orbit" />
-                    <span>Waiting for opponent...</span>
-                    <p>Copy the code below and send it to a friend to start playing!</p>
-                    <div >
-                        <input className="code-input" id="code-input" ref={codeInput} onClick={(e) => copyToClipboard(e)} readOnly />
+            <div className="login-overlay" ref={waitingModal} onClick={(e) => handleLogout(e)}>
+                <div className="code-container">
+                    <div>
                         <Copy />
+                        <input className="code-input" id="code-input" ref={codeInput} onClick={(e) => copyToClipboard(e)} readOnly />
                         <div className="copied" ref={copied}>Copied to clipboard!</div>
                     </div>
-                    <button type="button" onClick={(e) => handleLogout(e)}><Error /></button>
+                    <span>Waiting for opponent...</span>
+                    <p>Copy the code and send it to a friend to start playing!</p>
+                    <button type="button" onClick={(e) => handleLogout(e)}>Close</button>
                 </div>
             </div>
         </div>

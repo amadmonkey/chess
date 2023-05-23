@@ -4,10 +4,6 @@ import Cookies from 'js-cookie';
 
 // components
 import { ReactComponent as Send } from '../../img/send.svg';
-import { ReactComponent as Settings } from '../../img/settings.svg';
-import { ReactComponent as Flag } from '../../img/flag.svg';
-import { ReactComponent as Copy } from '../../img/copy.svg';
-import { ReactComponent as Reload } from '../../img/reload.svg';
 import { ReactComponent as Start } from '../../img/chat-start.svg';
 import { ReactComponent as Move } from '../../img/chat-move.svg';
 import { ReactComponent as Battle } from '../../img/chat-blades.svg';
@@ -22,27 +18,33 @@ import "./Chat.scss";
 const Chat = (props) => {
     let d = props.data, timer;
     let user = JSON.parse(Cookies.get('user'));
-    let opponent = JSON.parse(Cookies.get('opponent'));
-    const code = useRef(null), messageBoxRef = useRef(null);
-    const [turn, setTurn] = useState(d.turn);
+    const messageBoxRef = useRef(null);
     const [messages, setMessages] = useState(d.chat);
     const [message, setMessage] = useState("");
 
-    const createMessageItem = (attr, content) => {
-        return React.createElement('li', attr, <div className="message-item">{content}</div>);
+    const createMessageItem = (message, attr, content) => {
+        return React.createElement('li', attr, (
+            <>
+                <>
+                    <div className="message-item">
+                        {content}
+                    </div>
+                </>
+                <span className="time-ago">{message.timeAgo}</span>
+            </>
+        ))
     }
 
-    const handleDone = (status) => {
-        props.handleNotif();
-        props.handleFinishModal(status);
-    }
-
-    const handleSettings = (e) => {
+    const updateMessages = (messages) => {
+        return messages.map(message => {
+            message.timeAgo = timeAgo(+new Date(message.date))
+            return message;
+        })
     }
 
     const handleChatSubmit = (e) => {
         e.preventDefault();
-        setMessages([...messages, { nickname: user.nickname, roomId: user.roomId, message: message }]);
+        setMessages(updateMessages([...messages, { nickname: user.nickname, roomId: user.roomId, message: message, date: new Date() }]));
         setMessage("");
         API.SOCKET.CHAT.SEND({ nickname: user.nickname, roomId: user.roomId, message: message });
     }
@@ -52,22 +54,36 @@ const Chat = (props) => {
         e.key !== "Enter" && API.SOCKET.CHAT.TYPING(user);
     }
 
-    const copyToClipboard = (e) => {
-        code.current.select();
-        document.execCommand('copy');
-    }
-
-    const collapse = (e) => {
-        let parent = e.currentTarget.parentNode;
-        parent.classList.contains('hidden') ? parent.classList.remove('hidden') : parent.classList.add('hidden')
-    }
-
     const scrollMessagesToBottom = () => {
         if (messageBoxRef.current) {
             if (messageBoxRef.current.scrollHeight) {
                 messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
             }
         }
+    }
+
+    const timeAgo = (date) => {
+        // https://stackoverflow.com/questions/6108819/javascript-timestamp-to-relative-time
+        const units = {
+            year  : 24 * 60 * 60 * 1000 * 365,
+            month : 24 * 60 * 60 * 1000 * 365/12,
+            day   : 24 * 60 * 60 * 1000,
+            hour  : 60 * 60 * 1000,
+            minute: 60 * 1000,
+            second: 1000
+        }
+        
+        const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+        
+        const getRelativeTime = (d1, d2 = new Date()) => {
+            const elapsed = d1 - d2
+            // "Math.abs" accounts for both "past" & "future" scenarios
+            for (var u in units) 
+                if (Math.abs(elapsed) > units[u] || u === 'second') 
+                return rtf.format(Math.round(elapsed/units[u]), u)
+        }
+
+        return getRelativeTime(date);
     }
 
     useEffect(() => {
@@ -88,13 +104,14 @@ const Chat = (props) => {
     useEffect(() => {
         let isMounted = true;
         API.SOCKET.LINK.on("chat-response", (chat, t, done) => {
+            console.log('chat', chat);
+
             if (done) {
-                isMounted && handleDone(user.nickname === JSON.parse(done).nickname ? 'WIN' : 'LOSE');
+                isMounted && props.handleDone(user.nickname === JSON.parse(done).nickname ? 'WIN' : 'LOSE');
             } else {
-                setTurn(t);
-                setMessages(chat);
+                setMessages(updateMessages(chat));
                 clearTimeout(timer);
-                document.getElementById('typing').textContent = "";
+                document.getElementById('typing').innerText = "";
             }
             props.handleNotif();
         });
@@ -104,93 +121,77 @@ const Chat = (props) => {
         }
     }, [])
 
+    useEffect(() => {
+        let timer2;
+        timer2 = setInterval(() => {
+            setMessages(updateMessages(messages));
+        }, 60000);
+        return () => {
+            clearInterval(timer2);
+        }
+    })
+
     useEffect(scrollMessagesToBottom, [messages]);
 
     return props.data ? (
         <React.Fragment>
-            <div className="chat-container active">
-                <button className="chat-collapse" onClick={(e) => collapse(e)}>
-                </button>
-                <div className="user-info">
-                    <div className="profile">
-                        <div className={`user-nickname ${turn === user.isLight ? 'active' : ''}`}>
-                            {user.nickname}
-                            <div className="tag">YOU</div>
-                        </div>
-                        <div>VS</div>
-                        <div className={`opponent-nickname ${turn === user.isLight ? '' : 'active'}`}>
-                            {opponent.nickname}
-                        </div>
-                    </div>
-                    <footer>
-                        <div className="code-container">
-                            <input className="code-input" ref={code} onClick={(e) => copyToClipboard(e)} value={user.roomId} readOnly />
-                            <Copy />
-                        </div>
-                        <div className="tools">
-                            <button className="reload" onClick={(e) => handleSettings(e)}><Reload /></button>
-                            <button className="settings" onClick={(e) => handleSettings(e)}><Settings /></button>
-                            <button className="surrender" onClick={() => handleDone('LOGOUT')}><Flag /></button>
-                        </div>
-                    </footer>
-                </div>
+            <div className="chat-container">
                 <ul className="chat-messages" id="messages" ref={messageBoxRef}>
                     {
-                        messages.map((obj, i) => {
-                            switch (obj.type) {
+                        messages.map((m, i) => {
+                            switch (m.type) {
                                 case "START":
-                                    return createMessageItem({ key: i, className: "message-game" }, <React.Fragment><Start /> GAME START<br /> GLHF!</React.Fragment>);
+                                    return createMessageItem(m, { key: i, className: "message-game" }, <React.Fragment><Start />GAME START</React.Fragment>);
                                 case "CASTLE":
-                                    return createMessageItem({ key: i, className: "message-game" },
+                                    return createMessageItem(m, { key: i, className: "message-game" },
                                         <React.Fragment>
                                             <Castle />
                                             {
-                                                obj.user.nickname === user.nickname ?
+                                                m.user.nickname === user.nickname ?
                                                     <React.Fragment>
-                                                        <span className='user-text'>You</span> castled <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and <span className='user-text'>your rook</span> moved <span className='neutral-text'>{obj.rook.fromPosition} to {obj.rook.newPosition}</span>!
+                                                        <span className='user-text'>You</span> castled <span className='user-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span> and <span className='user-text'>your rook</span> moved <span className='neutral-text'>{m.rook.fromPosition} to {m.rook.newPosition}</span>!
                                                     </React.Fragment> :
                                                     <React.Fragment>
-                                                        <span className='opponent-text'>{obj.user.nickname}</span> castled <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and <span className='opponent-text'>their rook</span> moved <span className='neutral-text'>{obj.rook.fromPosition} to {obj.rook.position}</span>
+                                                        <span className='opponent-text'>{m.user.nickname}</span> castled <span className='opponent-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span> and <span className='opponent-text'>their rook</span> moved <span className='neutral-text'>{m.rook.fromPosition} to {m.rook.position}</span>
                                                     </React.Fragment>
                                             }
                                         </React.Fragment>
                                     );
                                 case "BATTLE":
-                                    return React.createElement('li', { key: i, className: "message-game", style: { backgroundColor: "#ff4545" } },
+                                    return createMessageItem(m, { key: i, className: "message-game" },
                                         <div className="message-item">
                                             <Battle />
                                             {
-                                                obj.user.nickname === user.nickname ?
+                                                m.user.nickname === user.nickname ?
                                                     <React.Fragment>
-                                                        <span className='user-text'>You</span> moved <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and captured their <span className='opponent-text'>{obj.opponentPiece.pieceName}</span>!
+                                                        <span className='user-text'>You</span> moved <span className='user-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span> and captured their <span className='opponent-text'>{m.opponentPiece.pieceName}</span>!
                                                     </React.Fragment> :
                                                     <React.Fragment>
-                                                        <span className='opponent-text'>{obj.user.nickname}</span> moved <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span> and captured <span className='user-text'>your {obj.opponentPiece.pieceName}</span>!
+                                                        <span className='opponent-text'>{m.user.nickname}</span> moved <span className='opponent-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span> and captured <span className='user-text'>your {m.opponentPiece.pieceName}</span>!
                                                     </React.Fragment>
                                             }
                                         </div>
                                     );
                                 case "MOVE":
-                                    return React.createElement('li', { key: i, className: "message-game" },
+                                    return createMessageItem(m, { key: i, className: "message-game" },
                                         <div className="message-item">
                                             <Move />
                                             {
-                                                obj.user.nickname === user.nickname ?
+                                                m.user.nickname === user.nickname ?
                                                     <React.Fragment>
-                                                        <span className='user-text'>You</span> moved <span className='user-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span>
+                                                        <span className='user-text'>You</span> moved <span className='user-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span>
                                                     </React.Fragment> :
                                                     <React.Fragment>
-                                                        <span className='opponent-text'>{obj.user.nickname}</span> moved <span className='opponent-text'>{obj.holdingPiece.pieceName}</span> from <span className='neutral-text'>{obj.fromPosition} to {obj.newPosition}</span>
+                                                        <span className='opponent-text'>{m.user.nickname}</span> moved <span className='opponent-text'>{m.holdingPiece.pieceName}</span> from <span className='neutral-text'>{m.fromPosition} to {m.newPosition}</span>
                                                     </React.Fragment>
                                             }
                                         </div>
                                     )
                                 default:
-                                    return React.createElement('li',
-                                        { key: i, className: user.nickname === obj.nickname ? 'message-user' : 'message-opponent' },
-                                        <div className="message-item">
-                                            {obj.message}
-                                        </div>
+                                    return createMessageItem(m, { key: i, className: user.nickname === m.nickname ? 'message-user' : 'message-opponent' },
+                                        <>
+                                            {m.message}
+                                        </>
                                     );
                             }
                         })

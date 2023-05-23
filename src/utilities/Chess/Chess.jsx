@@ -2,19 +2,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 
-// components
-import { ReactComponent as Broken } from '../../img/chess-broken.svg';
-
 // data
 import API from '../../data/API.js';
 import PIECE from '../../data/PIECE_HELPER.js';
 
 // styles
 import './Chess.scss';
+import UserInfo from '../UserInfo/UserInfo';
 
 const Chess = (props) => {
     let d = props.data;
-    let user = JSON.parse(Cookies.get('user'));
+    const user = JSON.parse(Cookies.get('user'));
+    const opponent = JSON.parse(Cookies.get('opponent'));
     let holdingPiece = null;
     const handRef = useRef(null);
     const copied = useRef(null);
@@ -56,20 +55,6 @@ const Chess = (props) => {
             }
         }
     }
-
-    // const setTileTypes = (tiles) => {
-    //     tiles.forEach((obj) => {
-    //         let typeClass = '';
-    //         switch (obj.type) {
-    //             case d.constants.MOVE_TYPE.battle: return typeClass = 'battle-tile';
-    //             case d.constants.MOVE_TYPE.castle: return typeClass = 'castling-tile';
-    //             case d.constants.MOVE_TYPE.self: return typeClass = 'self-tile';
-    //             case d.constants.MOVE_TYPE.move:
-    //             default: break;
-    //         }
-    //         getDomById(`t-${obj.tile}`).classList.add('valid-tile', typeClass);
-    //     });
-    // }
 
     const showValidTiles = (tiles) => {
         if (!holdingPiece && tiles.length > 1 && turn === user.isLight) {
@@ -121,8 +106,6 @@ const Chess = (props) => {
         let isMounted = true;
         API.SOCKET.LINK.on('chess-move-response', (turn, userSet, opponentSet, done) => {
             if (isMounted) {
-                console.log(userSet);
-                console.log(opponentSet);
                 setTurn(turn);
                 if (userSet[0].isLight === user.isLight) {
                     setUserSet(userSet);
@@ -140,17 +123,29 @@ const Chess = (props) => {
     }, [turn, userSet, user]);
 
     useEffect(() => {
+        let timer;
+        const elem = copied.current;
+        elem.classList.toggle('active');
         if (turn === user.isLight) {
-            copied.current.classList.toggle('active');
-            setTimeout(() => {
-                if (copied) {
-                    if (copied.current) {
-                        copied.current.classList.toggle('active');
-                    }
-                }
-            }, 1000);
+            elem.innerText = 'Your Turn';
+            elem.classList.add(user.isLight ? 'bg-light' : 'bg-dark');
+        } else {
+            elem.innerText = "Opponent's Turn";
+            elem.classList.add(user.isLight ? 'bg-dark' : 'bg-light');
         }
-    }, [turn, user])
+        timer = setTimeout(() => {
+            if (copied) {
+                if (elem) {
+                    elem.classList.toggle('active');
+                    elem.classList.remove('bg-light');
+                    elem.classList.remove('bg-dark');
+                }
+            }
+        }, 1000);
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [turn])
 
     useEffect(() => {
         let newTiles = [];
@@ -170,7 +165,7 @@ const Chess = (props) => {
                 }
 
                 (x === 0 && !yLegend.length) && setYLegend(yLegend => [...yLegend, React.createElement('span', { key: `y${y}` }, String.fromCharCode(ltr))]);
-                tile = createTile({ key: `${x}${y}`, id: tileId, onClick: (e) => handlePieceClick(user_piece ? user_piece : opponent_piece, e), className: `tile ${(x % 2 === 0) === (y % 2 === 0) ? 'light' : 'dark'}` }, piece);
+                tile = createTile({ key: `${x}${y}`, id: tileId, onClick: (e) => handlePieceClick(user_piece ? user_piece : opponent_piece, e), className: `tile ${(x % 2 === 0) === (y % 2 === 0) ? 'light' : 'dark'}` }, [piece, React.createElement('div', {className: 'interact-icon'})]);
                 row.push(tile)
             }
             newTiles.push(row);
@@ -180,10 +175,11 @@ const Chess = (props) => {
 
     return (
         <section className="chess-container">
-            <div className="graveyard opponent">
-                <header className="header"><Broken /></header>
-                {userSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
-            </div>
+            <UserInfo data={opponent}>
+                <div className="graveyard opponent">
+                    {userSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
+                </div>
+            </UserInfo>
             <div id="chess" className={`chess ${turn === user.isLight ? 'turn-user' : ''}`}>
                 <legend className="legend x">{xLegend}</legend>
                 <legend className="legend y">{yLegend}</legend>
@@ -192,10 +188,11 @@ const Chess = (props) => {
                 </ul>
                 <div id="hand" className="hand" ref={handRef}>{onHandImage}</div>
             </div>
-            <div className="graveyard user">
-                <header className="header"><Broken /></header>
-                {opponentSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
-            </div>
+            <UserInfo data={user} you handleDone={props.handleDone}>
+                <div className="graveyard user">
+                    {opponentSet.map((obj, i) => !obj.active && React.createElement('div', { key: i }, PIECE.GET.image(obj)))}
+                </div>
+            </UserInfo>
             <div className="copied" ref={copied}>Your turn</div>
         </section>
     )
