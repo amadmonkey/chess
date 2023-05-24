@@ -157,6 +157,13 @@ const Login = () => {
         };
     })
 
+    useEffect(() => {
+        window.addEventListener("beforeunload", handleLogout);
+        return () => {
+          window.removeEventListener("beforeunload", handleLogout);
+        };
+    });
+
     return (
         <div className="login-container">
             <div className="form-container">

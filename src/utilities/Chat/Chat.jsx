@@ -104,8 +104,6 @@ const Chat = (props) => {
     useEffect(() => {
         let isMounted = true;
         API.SOCKET.LINK.on("chat-response", (chat, t, done) => {
-            console.log('chat', chat);
-
             if (done) {
                 isMounted && props.handleDone(user.nickname === JSON.parse(done).nickname ? 'WIN' : 'LOSE');
             } else {
