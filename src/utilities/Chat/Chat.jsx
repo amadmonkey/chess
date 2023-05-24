@@ -196,8 +196,8 @@ const Chat = (props) => {
                     }
                     <li id="typing"></li>
                 </ul>
-                <form className="chat-form" onSubmit={(e) => handleChatSubmit(e)}>
-                    <input className="chat-input" value={message} maxLength="50" placeholder="Enter text here" onChange={(e) => handleTyping(e)} autoComplete="off" autoFocus />
+                <form className="chat-form" onSubmit={(e) => handleChatSubmit(e)} target="_self">
+                    <input className="chat-input" value={message} maxLength="50" placeholder="Enter text here" onChange={(e) => handleTyping(e)} autoComplete="off" autoFocus={window.self !== window.top ? false : true} />
                     <button type="submit"><Send /></button>
                 </form>
             </div >

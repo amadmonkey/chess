@@ -164,6 +164,8 @@ const Login = () => {
         };
     });
 
+    console.log(window.self !== window.top ? 'in iframe' : 'not in iframe');
+
     return (
         <div className="login-container">
             <div className="form-container">
@@ -172,10 +174,10 @@ const Login = () => {
                     <KING_LIGHT />
                     <h1 className="main-title">Play Chess?</h1>
                 </header>
-                <form onSubmit={(e) => handleLogin(e)}>
+                <form onSubmit={(e) => handleLogin(e)} target="_self">
                     <div className="form-group">
                         <label htmlFor="_nickname">Enter Nickname</label>
-                        <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" autoComplete="off" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus />
+                        <input placeholder="Nickname" type="text" id="_nickname" maxLength="10" autoComplete="off" className={nicknameError ? 'error' : ''} value={nicknameValue} onChange={(e) => handleInput(e)} autoFocus={window.self !== window.top ? false : true} />
                         <label htmlFor="_nickname" className="form-error">{nicknameError}</label>
                     </div>
                     <div className="form-group">
