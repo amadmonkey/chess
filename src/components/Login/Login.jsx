@@ -27,6 +27,13 @@ const Login = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
+        
+        grecaptcha.enterprise.ready(function() {
+            grecaptcha.enterprise.execute('6LeQXj8mAAAAAKdl6Dyh-xdqyGM2DPgkuFEYIJB5', {action: 'login'}).then(function(token) {
+                debugger
+            });
+        });
+
         if (nicknameValue && !roomId) {
             // make new room
             document.getElementById('form-submit').disabled = true;
@@ -163,6 +170,8 @@ const Login = () => {
           window.removeEventListener("beforeunload", handleLogout);
         };
     });
+
+    
 
     console.log(window.self !== window.top ? 'in iframe' : 'not in iframe');
 
