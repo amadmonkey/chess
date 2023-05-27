@@ -148,7 +148,7 @@ const Chess = (props) => {
     }, [turn])
 
     useEffect(() => {
-        let newTiles = [];
+        let updatedTiles = [];
         for (let x = 0; x < 8; x++) {
             let row = [], nmr = user.isLight ? (8 - x) : (1 + x);
             !xLegend.length && setXLegend(xLegend => [...xLegend, React.createElement('div', { key: `x${x}` }, React.createElement('span', null, nmr))]);
@@ -168,9 +168,9 @@ const Chess = (props) => {
                 tile = createTile({ key: `${x}${y}`, id: tileId, onClick: (e) => handlePieceClick(user_piece ? user_piece : opponent_piece, e), className: `tile ${(x % 2 === 0) === (y % 2 === 0) ? 'light' : 'dark'}` }, [piece, React.createElement('div', {className: 'interact-icon'})]);
                 row.push(tile)
             }
-            newTiles.push(row);
+            updatedTiles.push(row);
         }
-        setTiles(newTiles);
+        setTiles(updatedTiles);
     }, [userSet, opponentSet])
 
     return (
